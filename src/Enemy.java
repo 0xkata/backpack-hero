@@ -1,4 +1,3 @@
-import java.util.*;
 import javax.swing.*;
 
 public class Enemy extends Character {
@@ -8,15 +7,15 @@ public class Enemy extends Character {
 
     public Enemy(int maxHP, Move[] moves) {
         super(maxHP, new ImageIcon());
-        possibleMoves = moves;
-        nextMove = pickNextMove();
+        this.possibleMoves = moves;
+        this.nextMove = pickNextMove();
     }
 
     int pickNextMove() {
-        return (int) Math.random(0, this.possibleMoves.length);
+        return Driver.randomNum(0, possibleMoves.length);
     }
 
     void run() {
-
+        
     }
 }

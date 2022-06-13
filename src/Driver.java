@@ -17,7 +17,7 @@ public class Driver {
     static Item[] itemList;
 
 
-    public int randomNum(int low, int up) {
+    public static int randomNum(int low, int up) {
         return (int) Math.random() * up + low + 1;
     }
 }
