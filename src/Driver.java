@@ -8,15 +8,16 @@ import javax.swing.*;
 public class Driver {
     
     private static JFrame frame;
-    private static JPanel panel;
+    private static JPanel mainPanel;
     private static JPanel mapPanel;
+    private static JPanel fightPanel;
     private static JPanel highscores;
     private static JButton button;
     private static JLabel label;
 
     private static BufferedReader read;
     private static StringTokenizer st;
-    private static String line, s;
+    private static String line;
 
     private static int mouseX, mouseY;
     private static int score;
@@ -36,7 +37,7 @@ public class Driver {
 
     public Driver() {
         frame = new JFrame();
-        panel = new JPanel();
+        mainPanel = new JPanel();
     }
 
     public static void main(String[] args) throws IOException { 
@@ -44,7 +45,7 @@ public class Driver {
 
         frame.setPreferredSize(new Dimension(1100, 500));
 
-        generateMap(0);
+        generateMap(3);
 
         frame.pack();
         frame.setVisible(true);
@@ -59,25 +60,17 @@ public class Driver {
 
         map.clear();
 
-        // start from (3, 3)
-        // end room at (
         if (stage == 0) {
             updateMap(0);
         }
-        // start from (0, 2)
-        // end room at (10, 1)
         else if (stage == 1) {
             updateMap(1);
         }
-        // start from (10, 2)
-        // end room at (0, 1)
         else if (stage == 2) {
-            updateMap(5);
+            updateMap(4);
         }
-        // start from (5, 4)
-        // end room at (4, 0)
         else {
-            updateMap(9);
+            updateMap(7);
         }
     }
 
@@ -103,18 +96,48 @@ public class Driver {
         catch (Exception e) { System.out.println(e); }
     }
 
-    public static void runEnemyMove(Enemy e, int nextMove) {
-        int type = e.getPossibleMoves()[nextMove].getType();
-        int value = e.getPossibleMoves()[nextMove].getValue();
+    public static void updateMapPanel() {
+        mapPanel.removeAll();
 
-        if (type == 1) {
-            hero.setHp(hero.getHp() - value);
+        for (int i = 0; i < 5; ++i) {
+            for (int j = 0; j < 11; ++j) mapPanel.add(new JLabel(map.get(i).get(j).getPic()));
         }
-        if (type == 2) {
-            e.setArmor(e.getArmor() + value);
-        }
-        if (type == 3) {
+    }
 
+    public static void fight(int stage, Room r) {
+        // pick item
+        for (Enemy e : enemies) runEnemyMove(e);
+
+        // update panel
+        boolean check = false;
+        for (Enemy e : enemies) if (e.alive()) check = true;
+        if (!check) stageWin(r);
+    }
+
+    public static void updateFightPanel() {
+        fightPanel.removeAll();
+
+        // hud stuff
+    }
+
+    public static void stageWin(Room r) {
+        hero.checkLevelUP();
+        r.clear();
+    }
+
+    public static void runEnemyMove(Enemy e) {
+        int type = e.getPossibleMoves()[e.getNextMove()].getType();
+        int value = e.getPossibleMoves()[e.getNextMove()].getValue();
+
+        switch (type) {
+
+            case 1: hero.setHp(hero.getHp() - value);
+        
+            case 2: e.setArmor(e.getArmor() + value);
+
+            // case 3: hero.getStatus()[poison index] = value;
+
+            // case 4: hero.getStatus()[slow index] = value;
         }
     }
 

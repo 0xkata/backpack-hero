@@ -5,7 +5,7 @@ public abstract class Character {
     protected int hp;
     protected int maxHP;
     protected int armor;
-    protected int status;
+    protected int[] status;
     protected ImageIcon pic;
 
     public int getHp() {
@@ -32,11 +32,11 @@ public abstract class Character {
         this.armor = armor;
     }
 
-    public int getStatus() {
+    public int[] getStatus() {
         return this.status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(int[] status) {
         this.status = status;
     }
 
@@ -52,7 +52,7 @@ public abstract class Character {
         this.hp = maxHP;
         this.maxHP = maxHP;
         this.armor = 0;
-        this.status = 0;
+        this.status = new int[4];
         this.pic = i;
     }
 

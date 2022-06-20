@@ -10,7 +10,7 @@ public class Room {
         4 = healer
         5 = troll
         6 = boss room
-        7 = start room
+        7 = start room 1 north 2 east 3 south 4 west
         8 = next stage
         9 = win
         Enemies starting at 1X, X indicates the number of enemies.
@@ -39,9 +39,15 @@ public class Room {
         return this.type + " " + this.pic;
     }
 
+    public void clear() {
+        this.type = 1;
+        this.pic = new ImageIcon("room1.png");
+    }
+
     public Room(int type) {
         this.type = type;
-        if (type > 10) this.pic = new ImageIcon("room10.png");
+        if (type > 70) this.pic = new ImageIcon("room7" + (type - 70) + ".png");
+        else if (type > 10) this.pic = new ImageIcon("room10.png");
         else if (type > 7) this.pic = new ImageIcon("room8.png");
         else this.pic = new ImageIcon("room" + type + ".png");
     }
