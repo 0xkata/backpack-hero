@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-public class Hero extends Character {
+public class Hero extends Unit {
     
     private int xp;
     private int[] maxXP = { 10, 15, 20 };

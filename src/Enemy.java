@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-public class Enemy extends Character {
+public class Enemy extends Unit {
     
     private int nextMove;
     private Move[] possibleMoves;

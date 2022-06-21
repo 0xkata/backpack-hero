@@ -60,8 +60,8 @@ public class Driver implements Runnable, KeyListener, MouseListener {
 
         hero = new Hero(new ImageIcon("Hero.png"));
 
-        Thread thread = new Thread(this);
-        thread.start();
+        // Thread thread = new Thread(this);
+        // thread.start();
     }
 
     class MapPanel extends JPanel {
@@ -82,7 +82,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
 
             movingIcon.paintIcon(this, g, movingCoord.getCol(), movingCoord.getRow());
 
-            if (moving) movingIcon();
+            // if (moving) movingIcon();
         }
 
     }
@@ -93,7 +93,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         while (screen == 4) {
             mapPanel.repaint();
             try {
-                Thread.sleep(5); // The commands after while(true) but before try will execute once every 10 milliseconds
+                Thread.sleep( 5);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -107,7 +107,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         frame.setPreferredSize(new Dimension(1115, 539));
 
         screen = 4;
-        generateMap(3);
+        generateMap(0);
 
         frame.pack();
         frame.setVisible(true);
@@ -164,6 +164,10 @@ public class Driver implements Runnable, KeyListener, MouseListener {
     }
 
     public static void fight(int stage) {
+    
+
+        enemies = new Enemy[numEnemies];
+
         // pick item
         for (Enemy e : enemies) runEnemyMove(e);
 
@@ -194,9 +198,13 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         
             case 2: e.setArmor(e.getArmor() + value);
 
-            // case 3: hero.getStatus()[poison index] = value;
+            case 3: hero.getStatus()[1] = value;
 
-            // case 4: hero.getStatus()[slow index] = value;
+            case 4: hero.getStatus()[3] = value;
+
+            case 5: 
+
+            case 6: 
         }
     }
 
@@ -205,7 +213,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         Queue<Pair> q = new LinkedList<>();
         Stack<Pair> s = new Stack<>();
         visited[currentRoom.getRow()][currentRoom.getCol()] = true;
-        q.add(currentRoom);
+        q.offer(currentRoom);
         
         int[][] d =  {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
         Pair temp = new Pair(0, 0, 0, 0);
@@ -222,10 +230,12 @@ public class Driver implements Runnable, KeyListener, MouseListener {
 
                 // idk maybe something's wrong here
                 if (temp.getRow() == p.getRow() && temp.getCol() == p.getCol()) {
+                    s.push(temp);
                     while (!s.isEmpty()) {
                         Pair temp2 = s.pop();
-                        if (temp.getPrev_row() == temp2.getRow() && temp.getPrev_col() == temp2.getCol()) {
-                            path.addFirst(temp2);
+                        if (temp.getPrev_row() == temp2.getRow() 
+                            && temp.getPrev_col() == temp2.getCol()) {
+                            path.addFirst(temp);
                             temp = temp2;
                         }
                     }
@@ -244,7 +254,23 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         }
     }
 
+    public static Pair notSkipping() {
+        Pair p = new Pair(0, 0);
+
+        while (!path.isEmpty()) {
+            p = path.poll();
+            if (map.get(p.getRow()).get(p.getCol()).getType() != 1) {
+                path.clear();
+                return p;
+            }
+        }
+
+        return p;
+    }
+
     public static void movingIcon() {
+        System.out.println(moving);
+
         if (path.isEmpty()) moving = false;
         if (movingCoord.equals(destCoord)) {
             destCoord = path.removeFirst();;
@@ -252,8 +278,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
             destCoord.setCol(destCoord.getCol() * 100 + 50 - 16);
         }
 
-        System.out.println(movingCoord);
-        System.out.println(destCoord);
+        // if ()
 
         if (movingCoord.getRow() < destCoord.getRow()) movingCoord.setRow(movingCoord.getRow() + 1);
         else if (movingCoord.getRow() > destCoord.getRow()) movingCoord.setRow(movingCoord.getRow() - 1);
@@ -278,23 +303,63 @@ public class Driver implements Runnable, KeyListener, MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         if (screen == 4) {
-            if (!moving) {
-                int col = e.getX() / 100;
-                int row = e.getY() / 100;
+            // if (!moving) {
+            //     int col = e.getX() / 100;
+            //     int row = e.getY() / 100;
 
-                if (map.get(row).get(col).getType() != 0) {
-                    for (int i = 0; i < 5; ++i) for (int j = 0; j < 11; ++j) visited[i][j] = false;
+            //     if (!(currentRoom.getRow() == row && currentRoom.getCol() == col) 
+            //         && map.get(row).get(col).getType() != 0) {
 
-                    bfs(new Pair(row, col));
+            //         for (int i = 0; i < 5; ++i) for (int j = 0; j < 11; ++j) visited[i][j] = false;
 
-                    System.out.println(path);
+            //         bfs(new Pair(row, col));
+
+            //         destCoord = path.removeFirst();;
+            //         destCoord.setRow(destCoord.getRow() * 100 + 50 - 16);
+            //         destCoord.setCol(destCoord.getCol() * 100 + 50 - 16);
+
+            //         moving = true;
                     
-                    destCoord = path.removeFirst();;
-                    destCoord.setRow(destCoord.getRow() * 100 + 50 - 16);
-                    destCoord.setCol(destCoord.getCol() * 100 + 50 - 16);
-                    
-                    moving = true;
-                }
+            //     }
+            // }
+            int col = e.getX() / 100;
+            int row = e.getY() / 100;
+
+            currentRoom.setRow(row);
+            currentRoom.setCol(col);
+            movingCoord.setRow(row * 100 + 50 - 16);
+            movingCoord.setCol(col * 100 + 50 - 16);
+            
+            bfs(new Pair(row, col));
+            
+            currentRoom = notSkipping();
+
+            int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
+
+            if (type == 2) {
+
+            }
+            else if (type == 3) {
+
+            }
+            else if (type == 4) {
+
+            }
+            else if (type == 5) {
+
+            }
+            else if (type == 6) {
+
+            }
+            else if (type == 8) {
+
+            }
+            else if (type == 9) {
+
+            }
+            else if (type > 10 && type < 70) {
+                numEnemies = type - 10;
+                fight(stage);
             }
         }
     }
