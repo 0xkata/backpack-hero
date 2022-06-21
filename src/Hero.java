@@ -49,8 +49,8 @@ public class Hero extends Character {
     }
 
     
-    public Hero() {
-        super(15, new ImageIcon());
+    public Hero(ImageIcon i) {
+        super(35, i);
         this.xp = 0;
         this.level = 1;
     }
@@ -59,6 +59,7 @@ public class Hero extends Character {
         if (this.xp >= this.maxXP[this.level - 1]) {
             this.xp = 0;
             this.level++;
+            this.maxHP += 5;
         }
     }
 }

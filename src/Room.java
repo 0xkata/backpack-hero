@@ -2,7 +2,7 @@ import javax.swing.*;
 
 public class Room {
 
-     /*
+    /*
         0 = empty
         1 = path
         2 = chest
@@ -44,6 +44,11 @@ public class Room {
         this.pic = new ImageIcon("room1.png");
     }
 
+    public boolean equals(Object o) {
+        Room temp = (Room) o;
+        return this.type == temp.type;
+    }
+
     public Room(int type) {
         this.type = type;
         if (type > 70) this.pic = new ImageIcon("room7" + (type - 70) + ".png");
@@ -51,4 +56,5 @@ public class Room {
         else if (type > 7) this.pic = new ImageIcon("room8.png");
         else this.pic = new ImageIcon("room" + type + ".png");
     }
+
 }

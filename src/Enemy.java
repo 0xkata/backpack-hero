@@ -21,8 +21,8 @@ public class Enemy extends Character {
         this.possibleMoves = possibleMoves;
     }
 
-    public Enemy(int maxHP, Move[] moves) {
-        super(maxHP, new ImageIcon());
+    public Enemy(int maxHP, ImageIcon i, Move[] moves) {
+        super(maxHP, i);
         this.possibleMoves = moves;
         this.nextMove = pickNextMove();
     }

@@ -7,8 +7,8 @@ public class Move {
         2 add armor
         3 add poison
         4 add slow
-      
-        Boss sommon enemies
+        5 escape
+        6 (Boss) sommon enemies
      */
 
     private int type;
