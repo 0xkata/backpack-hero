@@ -164,9 +164,23 @@ public class Driver implements Runnable, KeyListener, MouseListener {
     }
 
     public static void fight(int stage) {
-    
+        numEnemies = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType() - 10;
 
         enemies = new Enemy[numEnemies];
+
+        for (int i = 0; i < numEnemies; ++i) {
+            if (stage == 0) {
+                enemies[i] = enemyList.get(0);
+            }
+            if (stage == 1) {
+                int index = randomNum(0, 1);
+                enemies[i] = enemyList.get(index);
+            }
+            if (stage == 2) {
+                int index = randomNum(0, 1);
+                enemies[i] = enemyList.get(index);
+            }
+        }
 
         // pick item
         for (Enemy e : enemies) runEnemyMove(e);
@@ -192,20 +206,21 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         int type = e.getPossibleMoves()[e.getNextMove()].getType();
         int value = e.getPossibleMoves()[e.getNextMove()].getValue();
 
-        switch (type) {
+        if (type == 1)
+            hero.setHp(hero.getHp() - value);
+        if (type == 2)
+            e.setArmor(e.getArmor() + value);
+        if (type == 3)
+            hero.getStatus()[1] = value;
+        if (type == 4)
+            hero.getStatus()[3] = value;
+        if (type == 5) {
 
-            case 1: hero.setHp(hero.getHp() - value);
-        
-            case 2: e.setArmor(e.getArmor() + value);
-
-            case 3: hero.getStatus()[1] = value;
-
-            case 4: hero.getStatus()[3] = value;
-
-            case 5: 
-
-            case 6: 
         }
+        if (type == 6) {
+
+        }
+             
     }
 
     public static void bfs(Pair p) {
@@ -216,17 +231,18 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         q.offer(currentRoom);
         
         int[][] d =  {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        Pair cur = new Pair(currentRoom.getRow(), currentRoom.getCol());
         Pair temp = new Pair(0, 0, 0, 0);
         
         while (!q.isEmpty()) {
-            currentRoom = q.poll();
-            s.push(currentRoom);
+            cur = q.poll();
+            s.push(cur);
 
             for (int i = 0; i < 4; ++i) {
-                temp.setRow(currentRoom.getRow() + d[i][0]);
-                temp.setCol(currentRoom.getCol() + d[i][1]);
-                temp.setPrev_row(currentRoom.getRow());
-                temp.setPrev_col(currentRoom.getCol());
+                temp.setRow(cur.getRow() + d[i][0]);
+                temp.setCol(cur.getCol() + d[i][1]);
+                temp.setPrev_row(cur.getRow());
+                temp.setPrev_col(cur.getCol());
 
                 // idk maybe something's wrong here
                 if (temp.getRow() == p.getRow() && temp.getCol() == p.getCol()) {
@@ -265,7 +281,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
             }
         }
 
-        return p;
+        return currentRoom;
     }
 
     public static void movingIcon() {
@@ -320,19 +336,24 @@ public class Driver implements Runnable, KeyListener, MouseListener {
 
             //         moving = true;
                     
-            //     }
+            //     }    
             // }
             int col = e.getX() / 100;
             int row = e.getY() / 100;
-
-            currentRoom.setRow(row);
-            currentRoom.setCol(col);
-            movingCoord.setRow(row * 100 + 50 - 16);
-            movingCoord.setCol(col * 100 + 50 - 16);
             
+            // currentRoom.setRow(row);
+            // currentRoom.setCol(col);
+
+            // movingCoord.setRow(row * 100 + 50 - 16);
+            // movingCoord.setCol(col * 100 + 50 - 16);
+            
+            System.out.println(currentRoom);
+
             bfs(new Pair(row, col));
             
             currentRoom = notSkipping();
+            movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
+            movingCoord.setCol(currentRoom.getCol() * 100 + 50 - 16);
 
             int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
 
