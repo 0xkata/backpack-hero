@@ -48,7 +48,7 @@ public class Hero extends Unit {
         this.level = level;
     }
 
-    
+
     public Hero(ImageIcon i) {
         super(35, i);
         this.xp = 0;

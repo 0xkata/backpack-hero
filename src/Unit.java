@@ -62,6 +62,10 @@ public abstract class Unit {
         this.pic = pic;
     }
 
+    public void changeHP(int n) {
+        this.hp += n;
+    }
+
     public Unit(int maxHP, ImageIcon i) {
         this.hp = maxHP;
         this.maxHP = maxHP;

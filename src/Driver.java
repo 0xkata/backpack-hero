@@ -207,7 +207,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         int value = e.getPossibleMoves()[e.getNextMove()].getValue();
 
         if (type == 1)
-            hero.setHp(hero.getHp() - value);
+            hero.changeHP(-value);;
         if (type == 2)
             e.setArmor(e.getArmor() + value);
         if (type == 3)
@@ -340,20 +340,14 @@ public class Driver implements Runnable, KeyListener, MouseListener {
             // }
             int col = e.getX() / 100;
             int row = e.getY() / 100;
-            
-            // currentRoom.setRow(row);
-            // currentRoom.setCol(col);
-
-            // movingCoord.setRow(row * 100 + 50 - 16);
-            // movingCoord.setCol(col * 100 + 50 - 16);
-            
-            System.out.println(currentRoom);
 
             bfs(new Pair(row, col));
             
             currentRoom = notSkipping();
             movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
             movingCoord.setCol(currentRoom.getCol() * 100 + 50 - 16);
+
+            mapPanel.repaint();
 
             int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
 
