@@ -8,9 +8,9 @@ import javax.swing.*;
 
 public class Driver implements Runnable, KeyListener, MouseListener {
     
-    private static JFrame frame;
+    private static JFrame frame, frame2;
     private static JPanel mainPanel;
-    private static MapPanel mapPanel;
+    private static JPanel mapPanel;
     private static JPanel fightPanel;
     private static JPanel highscores;
     private static JButton button;
@@ -20,7 +20,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
     private static StringTokenizer st;
     private static String line;
 
-    private static int screen = 0; // 0 menu 1 high score 2 help 3 map 4 game
+    private static int screen = 0; // 0 menu 1 high score 2 help 3 map 4 fight
     private static int score;
     
     private static int itemChosen;
@@ -44,15 +44,18 @@ public class Driver implements Runnable, KeyListener, MouseListener {
     private static boolean fighting = false;
 
     private static Hero hero;
+    private static int money = 0;
 
     public Driver() {
         frame = new JFrame();
+        frame2 = new JFrame();
         mainPanel = new JPanel();
 
         mapPanel = new MapPanel();
         mapPanel.addMouseListener(this);
+
         enemyList.add(new Enemy(30, new ImageIcon("Snake.png"), new Move[]{new Move(1, 5), new Move(2, 7)}));
-        enemyList.add(new Enemy(20, new ImageIcon("Hyena.png"), new Move[]{new Move(1, 6), new Move(2, 4), new Move(5, 0)}));
+        enemyList.add(new Enemy(20, new ImageIcon("Hyena.png"), new Move[]{new Move(1, 6), new Move(2, 4), new Move(5, 5)}));
         enemyList.add(new Enemy(35, new ImageIcon("Scorpio.png"), new Move[]{new Move(1, 5), new Move(2, 7), new Move(3, 3)}));
         enemyList.add(new Enemy(40, new ImageIcon("Vulture.png"), new Move[]{new Move(1, 4), new Move(2, 5), new Move(4, 2)}));
         enemyList.add(new Enemy(30, new ImageIcon("Mummy.png"), new Move[]{new Move(1, 7), new Move(2, 3)}));
@@ -60,14 +63,15 @@ public class Driver implements Runnable, KeyListener, MouseListener {
 
         hero = new Hero(new ImageIcon("Hero.png"));
 
-        // Thread thread = new Thread(this);
-        // thread.start();
+        fightPanel = new FightPanel();
+    
     }
 
-    class MapPanel extends JPanel {
+    class MapPanel extends JPanel implements MouseListener {
         
         public MapPanel() {
-            setPreferredSize(new Dimension(1115, 539));
+            setPreferredSize(new Dimension(1920, 1080));
+            addMouseListener(this);
         }
 
         @Override
@@ -83,6 +87,80 @@ public class Driver implements Runnable, KeyListener, MouseListener {
             movingIcon.paintIcon(this, g, movingCoord.getCol(), movingCoord.getRow());
 
             // if (moving) movingIcon();
+            // Thread thread = new Thread(this);
+            // thread.start();
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (!fighting) {
+                int col = e.getX() / 100;
+                int row = e.getY() / 100;
+
+                System.out.println(row + " " + col);
+
+                bfs(new Pair(row, col));
+                
+                currentRoom = notSkipping();
+                movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
+                movingCoord.setCol(currentRoom.getCol() * 100 + 50 - 16);
+
+                mapPanel.repaint();
+
+                int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
+
+                if (type == 2) {
+
+                }
+                else if (type == 3) {
+
+                }
+                else if (type == 4) {
+
+                }
+                else if (type == 5) {
+
+                }
+                else if (type == 6) {
+
+                }
+                else if (type == 8) {
+
+                }
+                else if (type == 9) {
+
+                }
+                else if (type > 10 && type < 70) {
+                    fightPanel.setVisible(true);
+                    numEnemies = type - 10;
+                    generateEnemies(stage);
+                    fightPanel.repaint();
+                }
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            // TODO Auto-generated method stub
+            
         }
 
     }
@@ -90,7 +168,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
     // Threading Method
     @Override
     public void run() {
-        while (screen == 4) {
+        while (screen == 3) {
             mapPanel.repaint();
             try {
                 Thread.sleep( 5);
@@ -99,19 +177,58 @@ public class Driver implements Runnable, KeyListener, MouseListener {
                 e.printStackTrace();
             }
         }
+        while (screen == 4) {
+            fightPanel.repaint();
+            try {
+                Thread.sleep( 5);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+    }
+
+    class FightPanel extends JPanel {
+        
+        int[] enemyPos = {1600, 1300, 1000, 700};
+
+        public FightPanel() {
+            setPreferredSize(new Dimension(1920, 1080));
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            
+            hero.getPic().paintIcon(this, g, 0, 700);
+
+            for (int i = 0; i < numEnemies; ++i) {
+                enemies[i].getPic().paintIcon(this, g, enemyPos[i], 700);
+            }
+        }
+
     }
 
     public static void main(String[] args) throws IOException { 
         Driver d = new Driver();
 
-        frame.setPreferredSize(new Dimension(1115, 539));
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        frame.setUndecorated(true);
 
-        screen = 4;
+        frame2.setPreferredSize(new Dimension(1100, 500)); 
+        frame2.setUndecorated(true);
+
         generateMap(0);
 
+        frame.add(fightPanel);
+
+        frame2.add(mapPanel);
+        
         frame.pack();
         frame.setVisible(true);
-        frame.add(mapPanel);
+        frame2.pack();
+        frame2.setVisible(true);
     }
 
     // stage 0: 1 enemy, 1 chest room
@@ -163,7 +280,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         catch (Exception e) { System.out.println(e); }
     }
 
-    public static void fight(int stage) {
+    public static void generateEnemies(int stage) {
         numEnemies = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType() - 10;
 
         enemies = new Enemy[numEnemies];
@@ -177,24 +294,28 @@ public class Driver implements Runnable, KeyListener, MouseListener {
                 enemies[i] = enemyList.get(index);
             }
             if (stage == 2) {
-                int index = randomNum(0, 1);
+                int index = randomNum(0, 3);
                 enemies[i] = enemyList.get(index);
             }
         }
+    }
 
+    public static void generateBoss() {
+        enemies = new Enemy[4];
+        enemies[0] = enemyList.get(5);
+    }
+
+    public static void fight() {
+        for (Enemy e : enemies) e.pickNextMove();
+        
         // pick item
-        for (Enemy e : enemies) runEnemyMove(e);
+        // for (Enemy e : enemies) runEnemyMove(e);
 
         // update panel
         boolean check = false;
         for (Enemy e : enemies) if (e.alive()) check = true;
         if (!check) stageWin(map.get(currentRoom.getRow()).get(currentRoom.getCol()));
-    }
 
-    public static void updateFightPanel() {
-        fightPanel.removeAll();
-
-        // hud stuff
     }
 
     public static void stageWin(Room r) {
@@ -209,16 +330,22 @@ public class Driver implements Runnable, KeyListener, MouseListener {
         if (type == 1)
             hero.changeHP(-value);;
         if (type == 2)
-            e.setArmor(e.getArmor() + value);
+            e.changeArmor(value);
         if (type == 3)
             hero.getStatus()[1] = value;
         if (type == 4)
             hero.getStatus()[3] = value;
         if (type == 5) {
-
+            e.changeHP(value);
         }
         if (type == 6) {
-
+            boolean flag = true;
+            for (int i = 2; i >= 0 && flag; --i) {
+                if (enemies[i] == null) {
+                    enemies[i] = enemyList.get(4);
+                    flag = false;
+                }
+            }
         }
              
     }
@@ -294,8 +421,6 @@ public class Driver implements Runnable, KeyListener, MouseListener {
             destCoord.setCol(destCoord.getCol() * 100 + 50 - 16);
         }
 
-        // if ()
-
         if (movingCoord.getRow() < destCoord.getRow()) movingCoord.setRow(movingCoord.getRow() + 1);
         else if (movingCoord.getRow() > destCoord.getRow()) movingCoord.setRow(movingCoord.getRow() - 1);
         else if (movingCoord.getCol() < destCoord.getCol()) movingCoord.setCol(movingCoord.getCol() + 1);
@@ -318,7 +443,7 @@ public class Driver implements Runnable, KeyListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (screen == 4) {
+        // if (screen == 4) {
             // if (!moving) {
             //     int col = e.getX() / 100;
             //     int row = e.getY() / 100;
@@ -338,45 +463,50 @@ public class Driver implements Runnable, KeyListener, MouseListener {
                     
             //     }    
             // }
-            int col = e.getX() / 100;
-            int row = e.getY() / 100;
+        //     int col = e.getX() / 100;
+        //     int row = e.getY() / 100;
 
-            bfs(new Pair(row, col));
+        //     System.out.println(row + " " + col);
+
+        //     bfs(new Pair(row, col));
             
-            currentRoom = notSkipping();
-            movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
-            movingCoord.setCol(currentRoom.getCol() * 100 + 50 - 16);
+        //     currentRoom = notSkipping();
+        //     movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
+        //     movingCoord.setCol(currentRoom.getCol() * 100 + 50 - 16);
 
-            mapPanel.repaint();
+        //     mapPanel.repaint();
 
-            int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
+        //     int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
 
-            if (type == 2) {
+        //     if (type == 2) {
 
-            }
-            else if (type == 3) {
+        //     }
+        //     else if (type == 3) {
 
-            }
-            else if (type == 4) {
+        //     }
+        //     else if (type == 4) {
 
-            }
-            else if (type == 5) {
+        //     }
+        //     else if (type == 5) {
 
-            }
-            else if (type == 6) {
+        //     }
+        //     else if (type == 6) {
 
-            }
-            else if (type == 8) {
+        //     }
+        //     else if (type == 8) {
 
-            }
-            else if (type == 9) {
+        //     }
+        //     else if (type == 9) {
 
-            }
-            else if (type > 10 && type < 70) {
-                numEnemies = type - 10;
-                fight(stage);
-            }
-        }
+        //     }
+        //     else if (type > 10 && type < 70) {
+        //         screen = 4;
+        //         mapPanel.setVisible(false);
+        //         fightPanel.setVisible(true);
+        //         numEnemies = type - 10;
+        //         generateEnemies(stage);
+        //     }
+        // }
     }
 
     @Override

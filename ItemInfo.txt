@@ -1,0 +1,60 @@
+1
+0
+Empty
+4
+Empty Space
+0
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+1
+1
+Banana
+0
+delicious banana
+0
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+1
+2
+Fire
+1
+hot fire
+2
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+2
+3
+Sword
+2
+sharp!
+1
+0 0 0 0
+0 a 0 0
+0 b 0 0
+0 0 0 0
+1
+4
+Apple
+3
+yummy apple
+3
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+3
+5
+Wood Sword
+0
+loong sword
+3
+0 0 0 0
+0 a 0 0
+0 b 0 0
+0 c 0 0

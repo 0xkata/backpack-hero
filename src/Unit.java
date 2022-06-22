@@ -66,6 +66,10 @@ public abstract class Unit {
         this.hp += n;
     }
 
+    public void changeArmor(int n) {
+        this.armor += n;
+    }
+
     public Unit(int maxHP, ImageIcon i) {
         this.hp = maxHP;
         this.maxHP = maxHP;
