@@ -228,6 +228,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		enemyList.add(new Enemy(30, new ImageIcon("Mummy.png"), new Move[]{new Move(1, 7), new Move(2, 3)}));
 		enemyList.add(new Enemy(120, new ImageIcon("Deceased.png"), new Move[]{new Move(1, 8), new Move(2, 8), new Move(6, 1)}));
 	}
+	
 	//reads the item info from the text file and adds the information to various collections
 	//no parameters
 	//returns void
@@ -258,7 +259,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
 				//item energy
 				int itemEnergy = Integer.parseInt(br.readLine());
-
+				
+				String type = br.readLine();
+				
 				//item spatial requirements
 				char[][] space = new char[4][4];
 				Space tempSpace = new Space(space, size);
@@ -303,7 +306,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 					g2.dispose();
 
 					Identifier id = new Identifier(curID, (char)(97+i));
-					Item add = new Item(id, name, rarity, size, resized, desc, itemEnergy, rotations);
+					Item add = new Item(id, name, rarity, size, resized, desc, itemEnergy, type, rotations);
 					if(i == 0) firstList.add(add);
 					iMap.put(id, add);
 					rarityList.get(rarity).add(add);

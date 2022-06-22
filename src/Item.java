@@ -14,6 +14,7 @@ public class Item {
 	private String itemName; //unique name for each item
 	private int rarity; //0 - common; 1 - uncommon; 2 - rare; 3 - legendary; 4 - relic
 	private int size;
+	private String type; //the class of item that this is
 	private int energy;
 	private int rotate = 0; //0 - no rotation; 1 - 90 degrees clockwise; 2 - 180 degrees clockwise; 3 - 270 degrees clockwise;
 	private BufferedImage bipic;
@@ -42,7 +43,7 @@ public class Item {
         return newImage;
     }
 	
-	Item(Identifier ID, String name, int rare, int size, BufferedImage pic, String effect, int energy, Space[] rotations){
+	Item(Identifier ID, String name, int rare, int size, BufferedImage pic, String effect, int energy, String type, Space[] rotations){
 		itemID = ID;
 		realID = numberOfItems;
 		numberOfItems++;
@@ -52,6 +53,7 @@ public class Item {
 		rotate = 0;
 		this.bipic = pic;
 		description = effect;
+		this.type = type;
 		this.energy = energy;
 		this.rotations = rotations;
 		rotatedPics[0] = bipic;
@@ -68,6 +70,7 @@ public class Item {
 		rarity = copy.rarity;
 		rotate = copy.rotate;
 		rotations = copy.rotations;
+		type = copy.type;
 		bipic = copy.bipic;
 		description = copy.description;
 		energy = copy.energy;
@@ -95,6 +98,9 @@ public class Item {
 	}
 	public boolean getInBag() {
 		return inBag;
+	}
+	public String getType() {
+		return type;
 	}
 	public String getName() {
 		return itemName;

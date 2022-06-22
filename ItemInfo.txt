@@ -4,26 +4,29 @@ Empty
 4
 Empty Space
 0
+Accessory
 0 0 0 0
 0 a 0 0
 0 0 0 0
 0 0 0 0
 1
 1
-Banana
+Iron Helmet
 0
-delicious banana
+Each turn, adds 2 Block. -2 Block if there is an empty space above this.
 0
+Armor
 0 0 0 0
 0 a 0 0
 0 0 0 0
 0 0 0 0
 1
 2
-Fire
+Bluefin
 1
-hot fire
-2
+Heals 12 HP. Destroyed on use.
+0
+Consumable
 0 0 0 0
 0 a 0 0
 0 0 0 0
@@ -32,18 +35,20 @@ hot fire
 3
 Sword
 2
-sharp!
+Deals 7 Damage.
 1
+Weapon
 0 0 0 0
 0 a 0 0
 0 b 0 0
 0 0 0 0
 1
 4
-Apple
+Cleaver
+0
+Deals 3 Damage.
 3
-yummy apple
-3
+Weapon
 0 0 0 0
 0 a 0 0
 0 0 0 0
@@ -52,8 +57,152 @@ yummy apple
 5
 Wood Sword
 0
-loong sword
+Deals 8 Damage.
 3
+Weapon
+0 0 0 0
+0 a 0 0
+0 b 0 0
+0 c 0 0
+4
+6
+Tough Buckler
+0
+Adds 7 Block.
+1
+Shield
+0 0 0 0
+0 a b 0
+0 c d 0
+0 0 0 0
+2
+7
+Meal
+0
+Adds 2 Energy. Destroyed on use.
+0
+Consumable
+0 0 0 0
+0 a b 0
+0 0 0 0
+0 0 0 0
+1
+8
+Rose of Thorns
+1
+Each turn, adds 1 Spikes.
+0
+Accessory
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+2
+9
+My First Wand
+1
+Deal 6 Damage. Heal 2 HP.
+1
+Weapon
+0 0 0 0
+0 0 a 0
+0 b 0 0
+0 0 0 0
+1
+10
+Golden Shiv
+2
+Deal 2 Damage. Gain 2 Gold.
+1
+Weapon
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+1
+11
+Citrine
+1
+Adjacent weapon this is pointing to gets +3 Damage.
+0
+Accessory
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+2
+12
+Dagger
+1
+Can be used once per turn. Deal 2 Damage. Add 8 Poison
+1
+Weapon
+0 0 0 0
+0 a 0 0
+0 b 0 0
+0 0 0 0
+1
+13
+Li'l Buckler
+2
+Adds 8 Block.
+1
+Shield
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+1
+14
+Hatchet
+2
+Can be used once per turn. Deals 5 Damage. -4 Damage if you own Armor items.
+0
+Weapon
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+1
+15
+Rare Herb
+2
+Adds 3 Max HP.
+0
+Consumable
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+2
+16
+Glass Bottle
+4
++6 Damage to all weapons. Cannot gain armor.
+0
+Accessory
+0 0 0 0
+0 a 0 0
+0 b 0 0
+0 0 0 0
+1
+17
+Coral
+4
++2 Spikes to all shields.
+0
+Accessory
+0 0 0 0
+0 a 0 0
+0 0 0 0
+0 0 0 0
+3
+18
+Rapier
+3
+Deal 8 Damage. +7 Damage this combat each time you take damage.
+2
+Weapon
 0 0 0 0
 0 a 0 0
 0 b 0 0
