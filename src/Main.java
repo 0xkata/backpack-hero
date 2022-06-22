@@ -66,6 +66,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		energy -= n;
 	}
 	private static JLabel energyLabel;
+	private static int turn; // 0 = pick enemy moves 1 = player turn 2 = enemy turn
 
 	//the various panels for the screens
 	static JFrame frame, frame2;
@@ -73,9 +74,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	static JPanel title;
 	static JPanel mapPanel;
 
-	//testing
+	// enemies related
 	public static int enemyHP = 10;
-
+	private static int[] enemyPos = {1600, 1300, 1000, 700};
 	private static Enemy[] enemies;
 	private static ArrayList<Enemy> enemyList = new ArrayList<>();
 	private static ArrayList<ArrayList<Room>> map = new ArrayList<>();
@@ -83,10 +84,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	private static int numEnemies = 3;
 	private static int stage = 0;
 
+	// map related
 	private static BufferedReader read;
     private static StringTokenizer st;
     private static String line;
-
 	private static ImageIcon movingIcon;
     private static Pair movingCoord;
     private static Pair destCoord;
@@ -95,7 +96,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     private static LinkedList<Pair> path = new LinkedList<>();
     private static boolean moving;
 
-	private static int[] enemyPos = {1600, 1300, 1000, 700};
+	// chest room 
+	private static boolean chest;
+	private static ImageIcon chest1;
 
 	public static void main(String[] args) throws IOException {
 		initialize(); //initialize the game
@@ -194,11 +197,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			createItem(randomRarity());
 		}
 		readEnemyInfo();
+		readRoomInfo();
 	}
 
 	public static void generateEnemies(int stage) {
         numEnemies = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType() - 10;
-		
 		
         enemies = new Enemy[numEnemies];
 
@@ -422,13 +425,12 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            // TODO Auto-generated method stub
             
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if (!fighting) {
+            if (!(chest || fighting)) {
                 int col = e.getX() / 100;
                 int row = e.getY() / 100;
 
@@ -442,10 +444,16 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
                 mapPanel.repaint();
 
+				System.out.println(currentRoom);
+
                 int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
 
-                if (type == 2) {
+				System.out.println(type);
 
+                if (type == 2) {
+					System.out.println("chest");
+					chest = true;
+					for (int i = 0; i < 3; ++i) createItem(randomRarity());
                 }
                 else if (type == 3) {
 
@@ -466,6 +474,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
                 }
                 else if (type > 10 && type < 70) {
+					System.out.println("fight");
                     numEnemies = type - 10;
                     generateEnemies(stage);
 					startFight();
@@ -627,6 +636,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
         return currentRoom;
     }
 
+	public static void readRoomInfo() { 
+		chest1 = new ImageIcon("chest1.png");
+	}
+
 	//runs the game loop
 	//no parameters
 	//returns void
@@ -635,29 +648,35 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			//main game loop
 			trackMouse();
 			this.repaint();
-			if(fighting) {
-				//pick enemy moves
-				if(playerTurn) {
+			// if(fighting) {
+			// 	//pick enemy moves
+			// 	for (Enemy e : enemies) e.pickNextMove();
 
-					//do the start of turn items
+			// 	if(playerTurn) {
 
-					//user can now use items
+			// 		//do the start of turn items
 
-					//after each item used, check if enemies are alive
-					if(enemyHP == 0) { //when all enemies die or player dies, fighting = false;
-						fighting = false;
-						System.out.println("no longer fighting!!");
-					}
-				}
-				else { //must not be player turn
+			// 		//user can now use items
 
-					//use enemy moves
-					//check if player / enemies are alive after each attack
-					energy = 3; //resetting the energy (after enemies do their attacks)
-					playerTurn = true;
-				}
+			// 		//after each item used, check if enemies are alive
+			// 		//when all enemies die or player dies, fighting = false;
 
-			}
+			// 		boolean check = true;
+			// 		for (Enemy e : enemies) if (e.alive()) check = false;
+			// 		if (check) {
+			// 			fighting = false;
+			// 			System.out.println("no longer fighting!!");
+			// 		}
+			// 	}
+			// 	else { //must not be player turn
+			// 		for (Enemy e : enemies) runEnemyMove(e);
+			// 		//use enemy moves
+			// 		//check if player / enemies are alive after each attack
+			// 		energy = 3; //resetting the energy (after enemies do their attacks)
+			// 		playerTurn = true;
+			// 	}
+
+			// }
 			try {
 				Thread.sleep(1000/FPS);
 			} catch(Exception e) {
@@ -728,14 +747,21 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 				g.drawImage(components.get(1+c).getPic(), (int)cur.getPoint().getX() + xShift, (int)cur.getPoint().getY()+yShift, this); //paint the next component
 			}
 		}
+		if (chest) {
+			// purge();
+			chest1.paintIcon(main, g, 1600, 700);
+			// for (int i = 0; i < 3; ++i) createItem(randomRarity());
+		}
 		if(fighting) {
+			fight();
+
 			hero.getPic().paintIcon(this, g, 0, 700);
 
             for (int i = 0; i < numEnemies; ++i) {
                 enemies[i].getPic().paintIcon(this, g, enemyPos[i], 700);
             }
 		}
-		if(playerTurn) {
+		if(turn == 1) {
 			g.drawRect(1, 1, 100, 300);
 		}
 		energyLabel.setText(""+energy);
@@ -903,7 +929,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	//returns void
 	public void mouseClicked(MouseEvent e) {
 		//if the mouse click is within the reorganize button's bounds
-		if(!reorganize && overBag() && playerTurn) { //if unable to reorganize, player must be in combat mode
+		if(!reorganize && overBag() && turn == 1) { //if unable to reorganize, player must be in combat mode
 			getSelectedItem(e);
 
 			//calls the abilities of the item when used
@@ -936,7 +962,12 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		}
 		else if(eventName.equals("END TURN")) {
 			System.out.println("end");
-			playerTurn = false;
+			if (chest) {
+				chest = false;
+				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
+				purge();
+			}
+			if (fighting) turn = 2;
 		}
 		else if(eventName.equals("QUIT")) {
 			System.exit(0);
@@ -981,14 +1012,40 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
 	public static void startFight() { //TODO
 		fighting = true;
-		playerTurn = true;
-		//		//randomly create enemies
+		// playerTurn = true;
+		turn = 0;
+		generateEnemies(stage);
 		reorganize = false;
-
 	}
+
+	public static void fight() {
+		if (turn == 0) { 
+			for (Enemy e : enemies) e.pickNextMove();
+			turn = 1;
+		}
+		else if (turn == 1) {
+			boolean check = true;
+			for (Enemy e : enemies) {
+				if (e.alive()) check = false;
+			}
+			if (check) {
+				fighting = false;
+				System.out.println("no longer fighting!!");
+			}
+		}
+		else if (turn == 2) {
+			for (Enemy e : enemies) runEnemyMove(e);
+			//use enemy moves
+			//check if player / enemies are alive after each attack
+			energy = 3; //resetting the energy (after enemies do their attacks)
+			turn = 0;
+		}
+	}
+
 	public static void endFight() {
 		fighting = false;
-		playerTurn = false;
+		// playerTurn = false;
+		turn = 0;
 		reorganize = true;
 	}
 	//Random number generator

@@ -79,6 +79,6 @@ public abstract class Unit {
     }
 
     public boolean alive() {
-        return this.hp <= 0;
+        return this.hp > 0;
     }
 }
