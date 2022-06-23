@@ -477,6 +477,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 bfs(new Pair(row, col));
                 
 				System.out.println(path);
+				System.out.println(row + " " + col);
 
                 currentRoom = notSkipping();
                 movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
@@ -624,6 +625,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
     public static void bfs(Pair p) {
         path.clear();
+		for (int i = 0; i < 5; ++i) for (int j = 0; j < 11; ++j) visited[i][j] = false;
+
         Queue<Pair> q = new LinkedList<>();
         Stack<Pair> s = new Stack<>();
         visited[currentRoom.getRow()][currentRoom.getCol()] = true;
@@ -960,7 +963,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		getSelectedItem(e);
 
 		if (fighting) {
-			for (int i = 0; i < 4; ++i) {
+			for (int i = 0; i < numEnemies; ++i) {
 				if (inRect(mouseLoc, new Point(enemyPos[i], 700), 300, 300)) {
 					selectedEnemy = i; 
 				}
