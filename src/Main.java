@@ -135,9 +135,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	private static int healCost;
 	private static ImageIcon healPic;
 
-	// boss room
-	private static boolean boss;
-
 	// economy
 	private static int money = 1000;
 	
@@ -472,7 +469,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if (!(chest || shop || heal || boss || fighting)) {
+            if (!(chest || shop || heal || fighting)) {
                 int col = e.getX() / 100;
                 int row = e.getY() / 100;
 
@@ -505,8 +502,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 }
                 else if (type == 6) {
 					System.out.println("boss");
-					boss = true;
 					generateBoss();
+					startFight();
                 }
                 else if (type == 8) {
 					System.out.println("Next Stage");
