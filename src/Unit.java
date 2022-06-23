@@ -86,4 +86,12 @@ public abstract class Unit {
     public boolean alive() {
         return this.hp > 0;
     }
+    public void tick() {
+    	changeHP(status[1]); //heal from regen
+    	pierceHP(-status[0]); //damage from poison (goes through armor)
+    	for(int i = 0; i < status.length; ++i) { //remove 1 from each status effect
+    		status[i] = Math.max(status[i]-1, 0); //make sure it doesn't go negative
+    	}
+    	armor = 0; //reset armor to 0
+    }
 }

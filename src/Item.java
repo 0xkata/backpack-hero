@@ -127,18 +127,12 @@ public class Item {
 		if(typeID == 0) {
 			System.out.println("Empty was used.");
 		}
-		else if(typeID == 1) { //Iron Helmet
-			int armor = 2;
-			if(yBagPos > 0) {
-				if(Main.getBag().getUnlocked()[yBagPos-1][xBagPos]) armor -= 2;
-			}
-			Main.getHero().changeArmor(armor*bottleArmor);
-		}
 		else if(typeID == 2) { //Bluefin
 			Main.getHero().changeHP(12);
 		}
 		else if(typeID == 3) { //Club
 			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-7+bottleDmg+citrineDmg);
+			Main.getEnemies()[Main.getSelectedEnemy()].getStatus()[4]++;
 		}
 		else if(typeID == 4) { //Cleaver
 			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-3+bottleDmg+citrineDmg);
@@ -151,9 +145,6 @@ public class Item {
 		}
 		else if(typeID == 7) { //Meal
 			Main.increaseEnergy(2);
-		}
-		else if(typeID == 8) { //Rose of Thorns
-			Main.getHero().getStatus()[2]++;
 		}
 		else if(typeID == 9) { //My First Wand
 			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-6+bottleDmg+citrineDmg);
@@ -186,6 +177,27 @@ public class Item {
 		if(oncePerTurn) used = true;
 		
 		Main.setStopFight(Main.checkEnemies());
+	}
+	public void auto() {
+		int typeID = this.itemID.getPrim();
+		int bottleArmor = 1;
+		int bottleDmg = 0;
+		if(Main.bagHasItem(16)) { //checking for glass bottle presence
+			System.out.println("bottle");
+			bottleDmg = -6; 
+			bottleArmor = 0;
+		}
+		
+		if(typeID == 1) { //Iron Helmet
+			int armor = 2;
+			if(yBagPos > 0) {
+				if(Main.getBag().getUnlocked()[yBagPos-1][xBagPos]) armor -= 2;
+			}
+			Main.getHero().changeArmor(armor*bottleArmor);
+		}
+		else if(typeID == 8) { //Rose of Thorns
+			Main.getHero().getStatus()[2]++;
+		}
 	}
 	public boolean hasAdjacent(int id) {
 		boolean out = false;

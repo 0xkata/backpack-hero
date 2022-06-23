@@ -76,7 +76,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		return energy;
 	}
 	private static JLabel energyLabel;
-	private static JLabel heroHPLabel;
+	private static JTextArea heroHPLabel;
 	private static JTextArea[] enemyHPLabels = new JTextArea[4];
 	private static int selectedEnemy = 0; //TODO make this get updated
 	public static int getSelectedEnemy() {
@@ -132,6 +132,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	// heal room
 	private static boolean heal;
 	private static ImageIcon alchemist;
+	private static int healCost;
+	private static ImageIcon healPic;
 
 	// boss room
 	private static boolean boss;
@@ -407,9 +409,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		this.add(energyLabel);
 		energyLabel.setBounds(1000, 500, 100, 50);
 		
-		heroHPLabel = new JLabel(hero.getHp() + "/" + hero.getMaxHP());
+		heroHPLabel = new JTextArea(hero.getHp() + "/" + hero.getMaxHP());
 		this.add(heroHPLabel);
-		heroHPLabel.setBounds(100, 900, 100, 50);
+		heroHPLabel.setBounds(100, 900, 100, 100);
 		for(int i = 0; i < 4; ++i) {
 			enemyHPLabels[i] = new JTextArea();
 			this.add(enemyHPLabels[i]);
@@ -477,7 +479,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 bfs(new Pair(row, col));
                 
 				System.out.println(path);
-				System.out.println(row + " " + col);
 
                 currentRoom = notSkipping();
                 movingCoord.setRow(currentRoom.getRow() * 100 + 50 - 16);
@@ -500,14 +501,12 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 else if (type == 4) {
 					System.out.println("heal");
 					heal = true;
-                }
-                else if (type == 5) {
-					System.out.println("troll");
-
+					generateHeal();
                 }
                 else if (type == 6) {
 					System.out.println("boss");
 					boss = true;
+					generateBoss();
                 }
                 else if (type == 8) {
 					System.out.println("Next Stage");
@@ -625,8 +624,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
     public static void bfs(Pair p) {
         path.clear();
-		for (int i = 0; i < 5; ++i) for (int j = 0; j < 11; ++j) visited[i][j] = false;
-
+        for (int i = 0; i < 5; ++i) for (int j = 0; j < 11; ++j) visited[i][j] = false;
         Queue<Pair> q = new LinkedList<>();
         Stack<Pair> s = new Stack<>();
         visited[currentRoom.getRow()][currentRoom.getCol()] = true;
@@ -714,6 +712,30 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		}
 	}
 
+	public static void generateHeal() {
+		if (stage == 0) {
+			healCost = 0;
+			healPic = new ImageIcon("heal0.png");
+		}
+		else if (stage == 0) {
+			healCost = 2;
+			healPic = new ImageIcon("heal1.png");			
+		}
+		else if (stage == 0) {
+			healCost = 5;
+			healPic = new ImageIcon("heal2.png");
+		}
+		else if (stage == 0) {
+			healCost = 10;
+			healPic = new ImageIcon("heal3.png");
+		}
+	}
+
+	public static void generateBoss() {
+		numEnemies = 4;
+		enemies = new Enemy[4];
+		enemies[0] = new Enemy(enemyList.get(5));		
+	}
 	
 	public static boolean checkEnemies() {
  		boolean check = true;
@@ -736,15 +758,17 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			if(fighting) {
 			 	if(turn == 0) {
 			 		//pick enemy moves
-//			 	 	for (Enemy e : enemies) e.pickNextMove();
+			 	 	for (Enemy e : enemies) e.pickNextMove();
 			 		System.out.println("enemy moves picked");
 			 		energy = 3;
 			 		for(ArrayList<Item> i : realItems.values()) { //resetting the used boolean
 			 			i.get(0).setUsed(false);
 			 		}
+			 		hero.tick(); //apply tick effects on hero
 			 		turn++;
 			 	}
 			 	if(turn == 1) { //automatic items
+			 		autoUse();
 			 		System.out.println("start of turn items used"); //do the start of turn items
 			 		turn++;
 			 		
@@ -757,8 +781,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			 		endFight();
 			 		continue;
 			 	}
-			 	if(turn == 3) { //turn will ++ after end turn is clicked. //TODO: on the end turn button, make sure it is disabled unless turn == 2
-			 		//also, when end turn is clicked, it will run poison and regen on the enemies and check again if they die
+			 	if(turn == 3) { //TODO: on the end turn button, make sure it is disabled unless turn == 2
+			 		
+			 		tickEnemies(); //need to check if fight should be over here before moves
+
 //			 		for (Enemy e : enemies) runEnemyMove(e); //use enemy moves
 			 		System.out.println("enemies used moves");
 			 		turn++;
@@ -772,7 +798,18 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			}
 		}
 	}
-
+	public void tickEnemies() {
+		for(Enemy e : enemies) {
+			e.tick();
+		}
+	}
+	public void autoUse() {
+		for(int i = 0; i < 5; ++i) {
+			for(int j = 0; j < 7; ++j) {
+				if(realBag.getContents()[i][j] != null) realBag.getContents()[i][j].auto();
+			}
+		}
+	}
 	//updates the x and y position and the tile of the backpack the mouse is in
 	//no parameters
 	//returns void
@@ -844,9 +881,14 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		if (shop) {
 			blacksmith.paintIcon(main, g, 1600, 700);
 
-			shopChosenButtons[0].paintIcon(main, g, 100, 700);
-			shopChosenButtons[1].paintIcon(main, g, 100, 800);
-			shopChosenButtons[2].paintIcon(main, g, 100, 900);
+			shopChosenButtons[0].paintIcon(main, g, 200, 700);
+			shopChosenButtons[1].paintIcon(main, g, 200, 800);
+			shopChosenButtons[2].paintIcon(main, g, 200, 900);
+		}
+
+		if (heal) { 
+			alchemist.paintIcon(main, g, 1600, 700);
+			healPic.paintIcon(main, g, 200, 700);
 		}
 
 		if(fighting) {
@@ -854,6 +896,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			hero.getPic().paintIcon(this, g, 0, 700);
 			
             for (int i = 0; i < numEnemies; ++i) {
+				if (enemies[i] == null) continue;
                 enemies[i].getPic().paintIcon(this, g, enemyPos[i], 700);
             }
             
@@ -862,13 +905,17 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     			if(enemies[i] != null) {
     				if(enemies[i].alive()) {
     					enemyHPLabels[i].setBounds(enemyPos[i], 900, 100, 100);
-    					enemyHPLabels[i].setText(enemies[i].getHp()+"/"+enemies[i].getMaxHP() +"\n poison: " + enemies[i].getStatus()[0] 
-    							+ "\n regen: " + enemies[i].getStatus()[1] + "\n spikes: " + enemies[i].getStatus()[2] 
-    									+ "\n rage: " + enemies[i].getStatus()[3] + "\n weak: " + enemies[i].getStatus()[4]);
+    					enemyHPLabels[i].setText(enemies[i].getHp()+"/"+enemies[i].getMaxHP() +"\n Armor:" + enemies[i].getArmor() + "\n Poison: " + enemies[i].getStatus()[0] 
+    							+ "\n Regen: " + enemies[i].getStatus()[1] + "\n Spikes: " + enemies[i].getStatus()[2] 
+    									+ "\n Rage: " + enemies[i].getStatus()[3] + "\n Weak: " + enemies[i].getStatus()[4]);
     				}
     			}
     		}
-
+            heroHPLabel.setBounds(100, 900, 100, 100);
+            heroHPLabel.setText(hero.getHp()+"/"+hero.getMaxHP() + "\n Armor:" + hero.getArmor() +"\n Poison: " + hero.getStatus()[0] 
+					+ "\n Regen: " + hero.getStatus()[1] + "\n Spikes: " + hero.getStatus()[2] 
+							+ "\n Rage: " + hero.getStatus()[3] + "\n Weak: " + hero.getStatus()[4]);
+            
 			g.drawRect(enemyPos[selectedEnemy], 700, 300, 300);
 		}
 //		if(turn == 1) {
@@ -964,7 +1011,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
 		if (fighting) {
 			for (int i = 0; i < numEnemies; ++i) {
-				if (inRect(mouseLoc, new Point(enemyPos[i], 700), 300, 300)) {
+				if (inRect(mouseLoc, new Point(enemyPos[i], 700), 300, 300) && enemies[i] != null) {
 					selectedEnemy = i; 
 				}
 			}
@@ -972,7 +1019,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
 		if (shop) {
 			for (int i = 0; i < 3; ++i) {
-				if (inRect(mouseLoc, new Point(100, 700 + i * 100), 250, 100)) {
+				if (inRect(mouseLoc, new Point(200, 700 + i * 100), 250, 100)) {
 					int price = shopButtons.get(shopChosenButtons[i]);
 					System.out.println(price);
 					int rarity = -1;
@@ -981,10 +1028,20 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
 					if (money >= price) {
 						money -= price;
+						System.out.println("bought " + rarity);
 						int rand = randomNum(0, rarityList.get(rarity).size() - 1);
-						System.out.println(rand);
 						createItem(rarityList.get(rarity).get(rand).getIdentifier().getPrim());
 					}
+				}
+			}
+		}
+
+		if (heal) {
+			if (inRect(mouseLoc, new Point(200, 700), 500, 200)) {
+				if (money >= healCost) {
+					System.out.println("healed");
+					money -= healCost;
+					hero.setHp(hero.maxHP);
 				}
 			}
 		}
@@ -1120,6 +1177,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		}
 		else if(eventName.equals("END TURN")) {
 			System.out.println("end");
+			
 			if (chest) {
 				chest = false;
 				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
@@ -1130,6 +1188,12 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
 				purge();
 			}
+
+			if (heal) { 
+				heal = false;
+				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
+			}
+
 			if (fighting) turn++;
 		}
 		else if(eventName.equals("QUIT")) {
@@ -1178,7 +1242,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		fighting = true;
 //		playerTurn = true;
 		turn = 0;
-		generateEnemies(stage);
 		reorganize = false;
 	}
 
@@ -1186,6 +1249,13 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		fighting = false;
 		turn = 0;
 		reorganize = true;
+		selectedEnemy = 0;
+		//hiding enemy status labels
+		for(int i = 0; i < enemyHPLabels.length; ++i) {
+			enemyHPLabels[i].setBounds(enemyPos[i], 900, 0, 0);
+		}
+		//hiding hero status label
+		heroHPLabel.setBounds(100, 900, 0, 0);
 		System.out.println("no longer fighting!!");
 	}
 	
