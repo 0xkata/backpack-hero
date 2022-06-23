@@ -1846,6 +1846,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	//setters TODO
 	public static void setUnlockable(boolean v) {
 		unlockable = v;
+		tilesLabel.setVisible(true);
 	}
 	public static void decreaseEnergy(int n) {
 		energy -= n;

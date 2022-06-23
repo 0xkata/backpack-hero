@@ -1,11 +1,16 @@
+//------------------------------------------------------------------------------
+// @author       Anthony Sin
+// Date          Unknown
+// Description   Defining Hero, extends from unit class. Holds XP, levels, energy and
+//               other important variables from Unit
+//------------------------------------------------------------------------------
+
 import javax.swing.*;
 
 public class Hero extends Unit {
     
     private int xp;
     private int[] maxXP = { 0, 10, 15, 20, 25, 30, 999};
-    private int energy;
-    private int maxEnergy;
     private int level;
 
     public int getXp() {
@@ -22,22 +27,6 @@ public class Hero extends Unit {
 
     public void setMaxXP(int[] maxXP) {
         this.maxXP = maxXP;
-    }
-
-    public int getEnergy() {
-        return this.energy;
-    }
-
-    public void setEnergy(int energy) {
-        this.energy = energy;
-    }
-
-    public int getMaxEnergy() {
-        return this.maxEnergy;
-    }
-
-    public void setMaxEnergy(int maxEnergy) {
-        this.maxEnergy = maxEnergy;
     }
 
     public int getLevel() {

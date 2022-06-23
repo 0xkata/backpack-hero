@@ -125,9 +125,7 @@ public class Item {
 		}
 		Main.decreaseEnergy(energy);
 		int typeID = this.itemID.getPrim();
-		System.out.println(typeID);
-		System.out.println("selected enemy: "+Main.getSelectedEnemy());
-//		System.out.println(typeID); 
+
 		if(typeID == 0) {
 			System.out.println("Empty was used.");
 		}
@@ -225,7 +223,7 @@ public class Item {
 			for(int i = 0; i < 4; ++i) {
 				Pair2 cur = ortho[i];
 				if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
-					if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out++;
+					if(Main.getBag().getContents()[y+cur.getSecond()][x+cur.getFirst()].getIdentifier().getPrim() == id) out++;
 				}
 			}
 			x = xBagPos;
