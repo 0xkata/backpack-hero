@@ -149,11 +149,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setUndecorated(true);
 
-		frame2 = new JFrame ("Map Monkey");
-		frame2.setPreferredSize(new Dimension(1100, 500));
-		frame2.setLocation(0, 0); 
-		frame2.setUndecorated(true);
-
 		//creating and adding the necessary components
 		main = new Main ();
 		mapPanel = new MapPanel();
@@ -168,14 +163,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
-
-		frame2.add(mapPanel);
-
-		frame2.setVisible(true);
-		frame2.pack();
-		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame2.setResizable(false);
-
 		
 //		JFrame mapFrame = new JFrame("bruh");
 //		JPanel aaa = new MapPanel();
@@ -493,11 +480,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
                 mapPanel.repaint();
 
-				System.out.println(currentRoom);
-
                 int type = map.get(currentRoom.getRow()).get(currentRoom.getCol()).getType();
-
-				System.out.println(type);
 
                 if (type == 2) {
 					System.out.println("chest");
@@ -522,7 +505,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 					boss = true;
                 }
                 else if (type == 8) {
-
+					System.out.println("Next Stage");
+					generateMap(stage++);
                 }
                 else if (type == 9) {
 
@@ -1091,6 +1075,19 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			System.out.println("start");
 			title.setVisible(false);
 			frame.add(main);
+
+			frame2 = new JFrame ("Map Monkey");
+			frame2.setPreferredSize(new Dimension(1100, 500));
+			frame2.setLocation(0, 0); 
+			frame2.setUndecorated(true);
+
+			frame2.add(mapPanel);
+
+			frame2.setVisible(true);
+			frame2.pack();
+			frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame2.setResizable(false);
+
 		}
 		else if(eventName.equals("END TURN")) {
 			System.out.println("end");
