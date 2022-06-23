@@ -242,10 +242,10 @@ public class Driver implements Runnable, KeyListener, MouseListener {
             updateMap(0);
         }
         else if (stage == 1) {
-            updateMap(1);
+            updateMap(randomNum(1, 3));
         }
         else if (stage == 2) {
-            updateMap(4);
+            updateMap(randomNum(4,6));
         }
         else {
             updateMap(7);

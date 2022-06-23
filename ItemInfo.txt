@@ -33,7 +33,7 @@ Consumable
 0 0 0 0
 2
 3
-Sword
+Club
 2
 Deals 7 Damage.
 1
@@ -47,7 +47,7 @@ Weapon
 Cleaver
 0
 Deals 3 Damage.
-3
+1
 Weapon
 0 0 0 0
 0 a 0 0
@@ -58,7 +58,7 @@ Weapon
 Wood Sword
 0
 Deals 8 Damage.
-3
+1
 Weapon
 0 0 0 0
 0 a 0 0
@@ -123,7 +123,7 @@ Weapon
 11
 Citrine
 1
-Adjacent weapon this is pointing to gets +3 Damage.
+Adjacent weapons get +3 Damage.
 0
 Accessory
 0 0 0 0
@@ -200,7 +200,7 @@ Accessory
 18
 Rapier
 3
-Deal 8 Damage. +7 Damage this combat each time you take damage.
+Deal 25 Damage. Ignores Armor.
 2
 Weapon
 0 0 0 0

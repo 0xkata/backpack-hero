@@ -23,7 +23,10 @@ public class Item {
 	private Space[] rotations = new Space[4]; //stores the spatial orientation of the item for all 4 rotations of the item
 	private Point loc = new Point (5,5); //the x,y location of the top left of the image drawn on screen
 	private boolean inBag = false;
-	
+	private int yBagPos;
+	private int xBagPos;
+	private boolean oncePerTurn = false;
+	private boolean used = false;
 	public String toString() {
 		return String.format("ID: %d; Component: %s; realID: %d; Name: %s; Rarity: %d; Size: %d; Description: %s", itemID.getPrim(), ""+itemID.getSupp(),realID, itemName, rarity, size, description);
 	}
@@ -60,8 +63,12 @@ public class Item {
 		for(int i = 1; i < 4; ++i) {
 			rotatedPics[i] = rotate(rotatedPics[i-1]);
 		}
+		xBagPos = -1;
+		yBagPos = -1;
+		oncePerTurn = itemID.getPrim() == 10 || itemID.getPrim() == 12 || itemID.getPrim() == 14;
 	}
 	Item(Item copy){
+		oncePerTurn = copy.oncePerTurn;
 		itemID = copy.itemID;
 		itemName = copy.itemName;
 		realID = numberOfItems;
@@ -77,18 +84,146 @@ public class Item {
 		loc = copy.loc;
 		inBag = copy.inBag;
 		rotatedPics = copy.rotatedPics;
+		xBagPos = copy.xBagPos;
+		yBagPos = copy.yBagPos;
 	}
 	
+	public void setUsed(boolean v) {
+		used = v;
+	}
 	public void use() {
 		//TODO: do various things depending on the itemID of the item
-//		System.out.println(this.itemID);
-		if(itemID.getPrim() == 3) {
-			Main.enemyHP -= 2;
-			System.out.println(Main.enemyHP);
+		int bottleArmor = 1;
+		int bottleDmg = 0;
+		int citrineDmg = 0;
+		if(type.equals("Consumable")) {
+			Main.retrieveItem(yBagPos, xBagPos, false);
+			Main.purge();
+		}
+		else if(type.equals("Weapon")) { 
+
+		}
+		else if(type.equals("Shield")) {
+			if(Main.bagHasItem(17)) Main.getHero().getStatus()[5] += 2; //checking for presence of coral, adding 2 spike
+		}
+		if(hasAdjacent(11)) citrineDmg = -3; //checking for adjacent Citrine
+		if(Main.bagHasItem(16)) { //checking for glass bottle presence
+			System.out.println("bottle");
+			bottleDmg = -6; 
+			bottleArmor = 0;
+		}
+
+		if(Main.getEnergy() - energy < 0) {
+			System.out.println("not enough energy!");
+			return; //if it would use more energy than we have, stop.
+		}
+		if(oncePerTurn && used) {
+			System.out.println("already used this turn");
+			return; //stop if this is a once per turn item and it has already been used
 		}
 		Main.decreaseEnergy(energy);
+		int typeID = this.itemID.getPrim();
+//		System.out.println(typeID); 
+		if(typeID == 0) {
+			System.out.println("Empty was used.");
+		}
+		else if(typeID == 1) { //Iron Helmet
+			int armor = 2;
+			if(yBagPos > 0) {
+				if(Main.getBag().getUnlocked()[yBagPos-1][xBagPos]) armor -= 2;
+			}
+			Main.getHero().changeArmor(armor*bottleArmor);
+		}
+		else if(typeID == 2) { //Bluefin
+			Main.getHero().changeHP(12);
+		}
+		else if(typeID == 3) { //Club
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-7+bottleDmg+citrineDmg);
+		}
+		else if(typeID == 4) { //Cleaver
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-3+bottleDmg+citrineDmg);
+		}
+		else if(typeID == 5) { //Wood Sword
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-8+bottleDmg+citrineDmg);
+		}
+		else if(typeID == 6) { //Tough Buckler
+			Main.getHero().changeArmor(7*bottleArmor);
+		}
+		else if(typeID == 7) { //Meal
+			Main.increaseEnergy(2);
+		}
+		else if(typeID == 8) { //Rose of Thorns
+			Main.getHero().getStatus()[2]++;
+		}
+		else if(typeID == 9) { //My First Wand
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-6+bottleDmg+citrineDmg);
+			Main.getHero().changeHP(2);
+		}
+		else if(typeID == 10) { //Golden Dagger
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-2+bottleDmg+citrineDmg);
+			//TODO add gold
+		}
+		else if(typeID == 12) { //Dagger
+			//figure out once per turn stuff later
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-2+bottleDmg+citrineDmg);
+			Main.getEnemies()[Main.getSelectedEnemy()].getStatus()[0] += 8;
+		}
+		else if(typeID == 13) { //Li'l Buckler
+			Main.getHero().changeArmor(8*bottleArmor);
+		}
+		else if(typeID == 14) { //Hatchet
+			int damage = -5;
+			if(Main.bagHasArmor()) damage += 4;
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage+bottleDmg+citrineDmg);
+		}
+		else if(typeID == 15) { //Rare Herb
+			Main.getHero().setMaxHP(Main.getHero().getMaxHP()+3);
+		}
+		else if(typeID == 18) { //Rapier
+			Main.getEnemies()[Main.getSelectedEnemy()].pierceHP(-25+bottleDmg+citrineDmg);
+		}
+		
+		if(oncePerTurn) used = true;
+		
+		Main.setStopFight(Main.checkEnemies());
 	}
-	
+	public boolean hasAdjacent(int id) {
+		boolean out = false;
+		int x = xBagPos;
+		int y = yBagPos;
+		for(int i = 0; i < 4; ++i) {
+			Pair2 cur = ortho[i];
+			if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
+				if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out = true;
+			}
+		}
+		for(int j = 0; j < rotations[rotate].getRelative().length; ++j) {
+			x += rotations[rotate].getRelative()[j].getFirst();
+			y += rotations[rotate].getRelative()[j].getSecond();
+			for(int i = 0; i < 4; ++i) {
+				Pair2 cur = ortho[i];
+				if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
+					if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out = true;
+				}
+			}
+			x = xBagPos;
+			y = yBagPos;
+		}
+		return out;
+	}
+	private Pair2[] ortho = {new Pair2(-1, 0), new Pair2(1, 0), new Pair2(0, -1), new Pair2(0, 1)}; 
+	public void setY(int y) {
+		yBagPos = y;
+	}
+	public void setX(int x) {
+		xBagPos = x;
+	}
+	public int getY() {
+		return yBagPos;
+	}
+	public int getX() {
+		return xBagPos;
+	}
 	public void rotate(int i) {
 		rotate += i;
 		rotate = (rotate%4);

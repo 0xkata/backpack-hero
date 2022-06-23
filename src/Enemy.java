@@ -30,7 +30,11 @@ public class Enemy extends Unit {
     public int pickNextMove() {
         return Driver.randomNum(0, possibleMoves.length);
     }
+    
+    public Enemy(Enemy e) {
+        super(e.maxHP, e.pic);
+        this.possibleMoves = e.possibleMoves;
+        this.nextMove = pickNextMove();
+    }
 
-
-    // will escape if only cowards remain
 }

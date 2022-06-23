@@ -4,18 +4,14 @@ public abstract class Unit {
     
     /*
 
-        1 poison
-        2 regeneration
-        3 slow
-        4 haste
-        5 spikes 
-        6 rage
-        7 weak
-        8 coward (Enemy exclusive)
-        9 spawn Enemy (Boss exclusive)
+        0 poison
+        1 regeneration
+        2 spikes 
+        3 rage
+        4 weak
 
      */
-
+	
     protected int hp;
     protected int maxHP;
     protected int armor;
@@ -62,10 +58,19 @@ public abstract class Unit {
         this.pic = pic;
     }
 
-    public void changeHP(int n) {
-        this.hp += n;
+    public void changeHP(int n) { //make negative values subtract from armor first, need to consider the rage and weak of the person who caused the hp change
+        if(n > 0) 	this.hp += n;
+        else {
+        	int pierced = armor + n;
+        	armor += n;
+        	if(armor < 0) armor = 0;
+        	if(pierced < 0) this.hp += pierced;
+        }
     }
 
+    public void pierceHP(int n) {
+    	this.hp += n;
+    }
     public void changeArmor(int n) {
         this.armor += n;
     }
@@ -74,7 +79,7 @@ public abstract class Unit {
         this.hp = maxHP;
         this.maxHP = maxHP;
         this.armor = 0;
-        this.status = new int[10];
+        this.status = new int[5];
         this.pic = i;
     }
 
