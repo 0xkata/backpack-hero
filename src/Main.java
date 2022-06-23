@@ -26,7 +26,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.imageio.*;
 
-@SuppressWarnings("serial")
 public class Main extends JPanel implements Runnable, MouseListener, ActionListener, KeyListener {
 
 	//item related variables
@@ -1509,14 +1508,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		selectedItem = -1;
 		selectedComponent = -1;
 		
-		//TODO remove after fixing bug
-		System.out.println();
-		for(int i = 0; i < 5; ++i) {
-			for(int j = 0; j < 7; ++j) {
-				System.out.print(realBag.getContents()[i][j].getIdentifier()+" ");
-			}
-			System.out.println();
-		}
 	}
 
 	//unusued override methods
@@ -1826,7 +1817,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		return id.getPrim();
 	}
 	
-	//getters TODO
+	//getters 
 	public static Hero getHero() {
 		return hero;
 	}
@@ -1843,7 +1834,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		return selectedEnemy;
 	}
 	
-	//setters TODO
+	//setters
 	public static void setUnlockable(boolean v) {
 		unlockable = v;
 		tilesLabel.setVisible(true);

@@ -3,9 +3,6 @@
 //Defining an Item, holds all the important information for the item
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
 
 public class Item {
 	private Pair2[] ortho = {new Pair2(-1, 0), new Pair2(1, 0), new Pair2(0, -1), new Pair2(0, 1)}; //orthogonally adjacent directions

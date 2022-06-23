@@ -9,11 +9,12 @@ import javax.swing.*;
 
 public class ShopButton implements Comparable<ShopButton> {
     
+    // instance variables
     private ImageIcon pic;
     private int rarity;
     private int price;
 
-    // Getters and setters
+    // getters and setters
     public ImageIcon getPic() {
         return this.pic;
     }
@@ -38,10 +39,12 @@ public class ShopButton implements Comparable<ShopButton> {
         this.price = price;
     }
 
+    // compareTo for sorting
     public int compareTo(ShopButton o) {
         return this.price - o.price;
     }
 
+    // constructor
     public ShopButton(ImageIcon i, int rarity, int price) {
         this.pic = i;
         this.rarity = rarity;

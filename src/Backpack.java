@@ -1,11 +1,8 @@
 //June 9, 2022
 //Roni Shae
 //The state of the backpack and all the things it contains
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.io.*;
 import java.util.*;
-import javax.swing.*;
 
 public class Backpack {
 

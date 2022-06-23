@@ -18,7 +18,7 @@ Missing Functionalities (All core gameplay elements are present):
 - No longer gain items after winning a battle (it was too easy like this)
 - Counter-clockwise rotation removed (only clockwise with 'W')
 
-No cheats because the game is very easy and fast.
+If you want to test a specific item, you can add the line createItem(int); in the initialize() method with the other createItem lines (specifiy which item by changing int. int = index).
 After the game is over, (win or lose) it will close. Run it again to start a new game.
 
 Roni:
