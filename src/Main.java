@@ -61,8 +61,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	private int xBagIndent = 610, yBagIndent = 1; //horizontal and vertical distance between the respective edge and where the bag starts to be drawn
 	static Dimension screenSize = new Dimension(1920, 1080);
 	
-	//fight variables
-	//	private static boolean playerTurn; //whether or not it is the player's turn
+	// fight variables
+	// private static boolean playerTurn; //whether or not it is the player's turn
 	private static int turn; // 0 = pick enemy moves 1 = player turn 2 = enemy turn
 	private static boolean fighting; //whether or not the player is in fight mode
 	private static int energy = 3;
@@ -77,7 +77,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	}
 	private static JLabel energyLabel;
 	private static JLabel heroHPLabel;
-	private static JLabel[] enemyHPLabel;
+	private static JTextArea[] enemyHPLabels = new JTextArea[4];
 	private static int selectedEnemy = 0; //TODO make this get updated
 	public static int getSelectedEnemy() {
 		return selectedEnemy;
@@ -116,7 +116,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     private static boolean[][] visited = new boolean[5][11];
     private static LinkedList<Pair> path = new LinkedList<>();
     private static boolean moving;
-	private static boolean sleep;
 
 	// chest room 
 	private static boolean chest;
@@ -411,6 +410,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		heroHPLabel = new JLabel(hero.getHp() + "/" + hero.getMaxHP());
 		this.add(heroHPLabel);
 		heroHPLabel.setBounds(100, 900, 100, 50);
+		for(int i = 0; i < 4; ++i) {
+			enemyHPLabels[i] = new JTextArea();
+			this.add(enemyHPLabels[i]);
+		}
 		
 		this.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
@@ -508,7 +511,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 else if (type == 8) {
 					System.out.println("Next Stage");
 					generateMap(++stage);
-					
                 }
                 else if (type == 9) {
 
@@ -844,13 +846,24 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		}
 
 		if(fighting) {
-//			fight();
 
 			hero.getPic().paintIcon(this, g, 0, 700);
 			
             for (int i = 0; i < numEnemies; ++i) {
                 enemies[i].getPic().paintIcon(this, g, enemyPos[i], 700);
             }
+            
+            for(int i = 0; i < numEnemies; ++i) { //TODO
+    			
+    			if(enemies[i] != null) {
+    				if(enemies[i].alive()) {
+    					enemyHPLabels[i].setBounds(enemyPos[i], 900, 100, 100);
+    					enemyHPLabels[i].setText(enemies[i].getHp()+"/"+enemies[i].getMaxHP() +"\n poison: " + enemies[i].getStatus()[0] 
+    							+ "\n regen: " + enemies[i].getStatus()[1] + "\n spikes: " + enemies[i].getStatus()[2] 
+    									+ "\n rage: " + enemies[i].getStatus()[3] + "\n weak: " + enemies[i].getStatus()[4]);
+    				}
+    			}
+    		}
 		}
 //		if(turn == 1) {
 //			g.drawRect(1, 1, 100, 300);
