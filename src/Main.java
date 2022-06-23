@@ -972,6 +972,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     					enemyMoveDisplay[i].paintIcon(this, g, enemyPos[i], 600);
     				}
     			}
+				else enemyHPLabels[i].setBounds(0, 0, 0, 0);
     		}
             heroHPLabel.setBounds(100, 900, 100, 110);
             heroHPLabel.setText(hero.getHp()+"/"+hero.getMaxHP() + "\nArmor:" + hero.getArmor() +"\nPoison: " + hero.getStatus()[0] 
@@ -1070,7 +1071,14 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	public void mousePressed(MouseEvent e) {
 		mouseLoc = e.getPoint();
 		getSelectedItem(e);
-
+		if(e.getButton() == MouseEvent.BUTTON3) {
+			if(realItems.get(selectedItem).get(0) != null) {
+				Item cur = realItems.get(selectedItem).get(0);
+				System.out.println("nya");
+				itemDescription.setBounds(cur.getLoc().x+100, cur.getLoc().y, 100, 200);
+				itemDescription.setText(cur.getName() + "\n\n" + cur.getDescription());
+			}
+		}
 		if (fighting) {
 			for (int i = 0; i < numEnemies; ++i) {
 				if (inRect(mouseLoc, new Point(enemyPos[i], 700), 300, 300) && enemies[i] != null) {
@@ -1225,7 +1233,15 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		String eventName = e.getActionCommand();
 		if(eventName.equals("REORGANIZE")) {
 			System.out.println("REORGANIZE clicked");
-			reorganize = !reorganize;
+			if(energy - 3 >= 0) {
+				energy -= 3;
+				reorganize = true;
+				finishedReorganizing.setBounds(40, 100, 150, 50);
+			}
+			else {
+				//no energy
+				System.out.println("no energy to reorganize / not fighting");
+			}
 		}
 		else if(eventName.equals("START GAME")) {
 			System.out.println("start");
