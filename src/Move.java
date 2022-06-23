@@ -1,3 +1,8 @@
+//------------------------------------------------------------------------------
+// @author       Anthony Sin
+// Date          Unknown
+// Description   Defining Enemy moves, keep track of the type and the damage/heal value
+//------------------------------------------------------------------------------
 public class Move {
     
     /*
@@ -11,9 +16,11 @@ public class Move {
         6 (Boss) summon enemies
      */
 
+    // instance variables
     private int type;
     private int value;
 
+    // getters and setters
     public int getType() {
         return this.type;
     }
@@ -30,6 +37,7 @@ public class Move {
         this.value = value;
     }
 
+    // constructor
     public Move(int a, int b) {
         this.type = a;
         this.value = b;

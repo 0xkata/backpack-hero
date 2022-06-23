@@ -1385,7 +1385,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 						Item cur = realItems.get(selectedItem).get(0);
 						//makes the item description text area appear and fills it with the information
 						itemDescription.setBounds(cur.getLoc().x+100, cur.getLoc().y, 100, 200);
-						itemDescription.setText(cur.getName() + "\n\n" + cur.getDescription());
+						itemDescription.setText(cur.getName() + "\nEnergy: "+ cur.getEnergy() + "\n\n" + cur.getDescription());
 					}
 				}
 			

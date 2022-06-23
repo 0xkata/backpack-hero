@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+// @author       Anthony Sin
+// Date          Unknown
+// Description   I thought this wasn't necessary, but linking three variables is too 
+//               much work, creating a class for it is the most convenient. Also 
+//               implemented Comparable to sort the rarity. 
+//------------------------------------------------------------------------------
 import javax.swing.*;
 
 public class ShopButton implements Comparable<ShopButton> {
@@ -6,6 +13,7 @@ public class ShopButton implements Comparable<ShopButton> {
     private int rarity;
     private int price;
 
+    // Getters and setters
     public ImageIcon getPic() {
         return this.pic;
     }

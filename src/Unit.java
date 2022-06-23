@@ -1,3 +1,9 @@
+//------------------------------------------------------------------------------
+// @author       Anthony Sin
+// Date          Unknown
+// Description   Defining units (characters), keeping track of the basic variables 
+//              -- HP, armor, status.
+//------------------------------------------------------------------------------
 import javax.swing.*;
 
 public abstract class Unit {
@@ -12,12 +18,14 @@ public abstract class Unit {
 
      */
 	
+    // instance variables
     protected int hp;
     protected int maxHP;
     protected int armor;
     protected int[] status;
     protected ImageIcon pic;
 
+    // getters and setters
     public int getHp() {
         return this.hp;
     }
@@ -58,6 +66,10 @@ public abstract class Unit {
         this.pic = pic;
     }
 
+    /**
+     * Easier method to change the HP variable
+     * @param n increment or decrement 
+     */
     public void changeHP(int n) {
         if(n > 0) {
             this.hp += n;
@@ -71,13 +83,23 @@ public abstract class Unit {
         }
     }
 
+    /**
+     * Damage ignoring armor
+     * @param n mostly damage
+     */
     public void pierceHP(int n) {
     	this.hp += n;
     }
+
+    /**
+     * Easier method to change the Armor variable
+     * @param n increment or decrement
+     */
     public void changeArmor(int n) {
         this.armor += n;
     }
 
+    // constructor
     public Unit(int maxHP, ImageIcon i) {
         this.hp = maxHP;
         this.maxHP = maxHP;
@@ -86,9 +108,17 @@ public abstract class Unit {
         this.pic = i;
     }
 
+    /**
+     * Check if the unit is still alive
+     * @return boolean value
+     */
     public boolean alive() {
         return this.hp > 0;
     }
+
+    /**
+     * status changing the HP variable
+     */
     public void tick() {
     	changeHP(status[1]); //heal from regen
     	pierceHP(-status[0]); //damage from poison (goes through armor)
@@ -98,6 +128,10 @@ public abstract class Unit {
     	}
     	armor = 0; //reset armor to 0
     }
+
+    /**
+     * status changing over time
+     */
     public void tick2() {
     	status[4] = Math.max(status[4]-1, 0);
     }

@@ -2,7 +2,7 @@
 // @author       Anthony Sin
 // Date          Unknown
 // Description   Defining Enemy, extends from unit class. Holds all the moves and
-//               other important variables
+//               other important variables from Unit
 //------------------------------------------------------------------------------
 
 import javax.swing.*;

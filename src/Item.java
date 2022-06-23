@@ -1,6 +1,6 @@
 //April 29, 2022
 //Roni Shae
-//Defining an Item
+//Defining an Item, holds all the important information for the item
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -8,17 +8,18 @@ import java.util.*;
 import javax.swing.*;
 
 public class Item {
+	private Pair2[] ortho = {new Pair2(-1, 0), new Pair2(1, 0), new Pair2(0, -1), new Pair2(0, 1)}; //orthogonally adjacent directions
 	private Identifier itemID; //unique ID for each type of item
 	private static int numberOfItems = 0; //the number of items
 	private int realID; //unique ID for every item created
 	private String itemName; //unique name for each item
 	private int rarity; //0 - common; 1 - uncommon; 2 - rare; 3 - legendary; 4 - relic
-	private int size;
+	private int size; //the amount of components this takes up
 	private String type; //the class of item that this is
-	private int energy;
+	private int energy; //the amount of energy using this takes
 	private int rotate = 0; //0 - no rotation; 1 - 90 degrees clockwise; 2 - 180 degrees clockwise; 3 - 270 degrees clockwise;
-	private BufferedImage bipic;
-	private BufferedImage[] rotatedPics = new BufferedImage[4];
+	private BufferedImage bipic; //the original buffered image
+	private BufferedImage[] rotatedPics = new BufferedImage[4]; //the 4 rotated pictures
 	private String description; //the description of the item
 	private Space[] rotations = new Space[4]; //stores the spatial orientation of the item for all 4 rotations of the item
 	private Point loc = new Point (5,5); //the x,y location of the top left of the image drawn on screen
@@ -31,21 +32,23 @@ public class Item {
 		return String.format("ID: %d; Component: %s; realID: %d; Name: %s; Rarity: %d; Size: %d; Description: %s", itemID.getPrim(), ""+itemID.getSupp(),realID, itemName, rarity, size, description);
 	}
 	
-	//https://www.geeksforgeeks.org/java-program-to-rotate-an-image/
-	private static BufferedImage rotate(BufferedImage img) {
+	//Rotates an image 90 degrees
+	//image: the image to rotate
+	//returns the rotated image
+	private static BufferedImage rotate(BufferedImage image) {
         // Getting Dimensions of image
-        int width = img.getWidth();
-        int height = img.getHeight();
+        int w = image.getWidth();
+        int h = image.getHeight();
 
-        BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+        //rotating
+        BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         Graphics2D g2 = newImage.createGraphics();
-
-        g2.rotate(Math.toRadians(90), width / 2, height / 2);
-        g2.drawImage(img, null, 0, 0);
+        g2.rotate(Math.toRadians(90), w/2, h/2);
+        g2.drawImage(image, null, 0, 0);
  
         return newImage;
     }
-	
+	//Constructors
 	Item(Identifier ID, String name, int rare, int size, BufferedImage pic, String effect, int energy, String type, Space[] rotations){
 		itemID = ID;
 		realID = numberOfItems;
@@ -88,11 +91,11 @@ public class Item {
 		yBagPos = copy.yBagPos;
 	}
 	
-	public void setUsed(boolean v) {
-		used = v;
-	}
+	//uses the item. does various things depending on the itemID of the item
+	//no parameters
+	//returns void
 	public void use() {
-		//TODO: do various things depending on the itemID of the item
+		
 		int rage = Main.getHero().getStatus()[3];
 		int weak = Main.getHero().getStatus()[4];
 		int bottleArmor = 1;
@@ -187,6 +190,10 @@ public class Item {
 		
 		Main.setStopFight(Main.checkEnemies());
 	}
+	
+	//runs the automatic items
+	//no param
+	//returns void
 	public void auto() {
 		int typeID = this.itemID.getPrim();
 		int bottleArmor = 1;
@@ -207,16 +214,29 @@ public class Item {
 			Main.getHero().getStatus()[2]++;
 		}
 	}
+	//rotates the image
+	//i: amount to rotate by
+	//returns void
+	public void rotate(int i) {
+		rotate += i;
+		rotate = (rotate%4);
+	}
+	
+	//counts the number of adjacent items with given variable
+	//id: the id to check for
+	//returns the number of adjacent
 	public int numAdjacent(int id) {
 		int out = 0;
 		int x = xBagPos;
 		int y = yBagPos;
+		//adjacent to origin
 		for(int i = 0; i < 4; ++i) {
 			Pair2 cur = ortho[i];
 			if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
 				if(Main.getBag().getContents()[y+cur.getSecond()][x+cur.getFirst()].getIdentifier().getPrim() == id) out++;
 			}
 		}
+		//adjacent to each component
 		for(int j = 0; j < rotations[rotate].getRelative().length; ++j) {
 			x += rotations[rotate].getRelative()[j].getFirst();
 			y += rotations[rotate].getRelative()[j].getSecond();
@@ -231,22 +251,13 @@ public class Item {
 		}
 		return out;
 	}
-	private Pair2[] ortho = {new Pair2(-1, 0), new Pair2(1, 0), new Pair2(0, -1), new Pair2(0, 1)}; 
-	public void setY(int y) {
-		yBagPos = y;
-	}
-	public void setX(int x) {
-		xBagPos = x;
-	}
+	
+
 	public int getY() {
 		return yBagPos;
 	}
 	public int getX() {
 		return xBagPos;
-	}
-	public void rotate(int i) {
-		rotate += i;
-		rotate = (rotate%4);
 	}
 	public Space[] getRotations() {
 		return rotations;
@@ -265,9 +276,6 @@ public class Item {
 	}
 	public Point getLoc() {
 		return this.loc;	
-	}
-	public void setInBag(boolean v) {
-		inBag = v;
 	}
 	public BufferedImage getPic() {
 		return rotatedPics[rotate];
@@ -291,14 +299,29 @@ public class Item {
 	public int getSize() {
 		return this.size;
 	}
-	public void setPoint(Point p) {
-		this.loc = p;
-	}
+	
 	public Point getPoint() {
 		return this.loc;
+	}
+	
+	//setters
+	public void setPoint(Point p) {
+		this.loc = p;
 	}
 	public void changePoint(int x, int y) {
 		loc.x += x;
 		loc.y += y;
+	}
+	public void setUsed(boolean v) {
+		used = v;
+	}
+	public void setInBag(boolean v) {
+		inBag = v;
+	}
+	public void setY(int y) {
+		yBagPos = y;
+	}
+	public void setX(int x) {
+		xBagPos = x;
 	}
 }

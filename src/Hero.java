@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // @author       Anthony Sin
 // Date          Unknown
-// Description   Defining Hero, extends from unit class. Holds XP, levels, energy and
+// Description   Defining Hero, extends from unit class. Holds XP, levels and
 //               other important variables from Unit
 //------------------------------------------------------------------------------
 

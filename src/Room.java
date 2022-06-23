@@ -1,3 +1,9 @@
+//------------------------------------------------------------------------------
+// @author       Anthony Sin
+// Date          Unknown
+// Description   Defining Room, included its type and picture so I could paint the
+//               image directly with the Room
+//------------------------------------------------------------------------------
 import javax.swing.*;
 
 public class Room {
@@ -15,9 +21,11 @@ public class Room {
         Enemies starting at 1X, X indicates the number of enemies.
     */
 
+    // instance variables
     private int type;
     private ImageIcon pic;
 
+    // getters and setters
     public int getType() {
         return this.type;
     }
@@ -34,20 +42,19 @@ public class Room {
         this.pic = pic;
     }
 
-    public String toString() {
-        return this.type + " " + this.pic;
-    }
-
+    // clearing a room after "clearing a room"
     public void clear() {
         this.type = 1;
         this.pic = new ImageIcon("room1.png");
     }
 
+    // equals method, compares the type
     public boolean equals(Object o) {
         Room temp = (Room) o;
         return this.type == temp.type;
     }
 
+    // constructor
     public Room(int type) {
         this.type = type;
         if (type > 70) this.pic = new ImageIcon("room7" + (type - 70) + ".png");

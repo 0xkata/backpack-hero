@@ -1,31 +1,20 @@
+//defines a space for an item
+//Roni Shae
+//June 22, 2022
+
 public class Space {
 	char[][] grid = new char[4][4];
 	int itemSize;
 	private Pair2[] relative;
 	Pair2 origin;
 	
+	//constructor
 	Space(char[][] load, int size) {
 		grid = load;
 		itemSize = size;
 		relative = new Pair2[itemSize-1];
 	}
-	public Pair2[] getRelative(){
-		return relative;
-	}
-	public void print() {
-		for(int i = 0; i < 4; ++i) {
-			for(int j = 0; j < 4; ++j) {
-				System.out.print(grid[i][j]);
-			}
-			System.out.println();
-		}
-	}
-	public void setOrigin(Pair2 in) {
-		origin = in;
-	}
-	public Pair2 getOrigin() {
-		return origin;
-	}
+
 	//rotates the grid clockwise 90 degrees
 	//no parameters
 	//returns the rotated grid
@@ -38,14 +27,29 @@ public class Space {
 		}
 		return rotated;
 	}
-	public char[][] getGrid(){
-		return grid;
-	}
+
+	//updates the origin of the item
+	//no parameters
+	//returns void
 	public void findOrigin() {
 		for(int i = 0; i < 4; ++i) {
 			for(int j = 0; j < 4; ++j) {
 				if(grid[i][j] == 'a') origin = new Pair2(i, j);
 			}
 		}
+	}
+	
+	//getters & setters
+	public void setOrigin(Pair2 in) {
+		origin = in;
+	}
+	public char[][] getGrid(){
+		return grid;
+	}
+	public Pair2 getOrigin() {
+		return origin;
+	}
+	public Pair2[] getRelative(){
+		return relative;
 	}
 }
