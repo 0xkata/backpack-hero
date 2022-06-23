@@ -6,7 +6,7 @@ public abstract class Unit {
 
         0 poison
         1 regeneration
-        2 spikes 
+        2 [place holder]
         3 rage
         4 weak
 
@@ -58,7 +58,7 @@ public abstract class Unit {
         this.pic = pic;
     }
 
-    public void changeHP(int n) { //make negative values subtract from armor first, need to consider the rage and weak of the person who caused the hp change
+    public void changeHP(int n) {
         if(n > 0) {
             this.hp += n;
             if (this.hp > this.maxHP) this.hp = this.maxHP;
@@ -92,9 +92,13 @@ public abstract class Unit {
     public void tick() {
     	changeHP(status[1]); //heal from regen
     	pierceHP(-status[0]); //damage from poison (goes through armor)
-    	for(int i = 0; i < status.length; ++i) { //remove 1 from each status effect
+    	for(int i = 0; i < status.length-1; ++i) { //remove 1 from each status effect
+    		//(except weak i.e. last one)
     		status[i] = Math.max(status[i]-1, 0); //make sure it doesn't go negative
     	}
     	armor = 0; //reset armor to 0
+    }
+    public void tick2() {
+    	status[4] = Math.max(status[4]-1, 0);
     }
 }

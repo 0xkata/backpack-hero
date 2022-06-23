@@ -3,7 +3,7 @@ import javax.swing.*;
 public class Hero extends Unit {
     
     private int xp;
-    private int[] maxXP = { 10, 15, 20 };
+    private int[] maxXP = { 0, 10, 15, 20, 25, 30, 999};
     private int energy;
     private int maxEnergy;
     private int level;
@@ -48,6 +48,10 @@ public class Hero extends Unit {
         this.level = level;
     }
 
+    public void changeXP(int n) {
+        this.xp += n;
+    }
+
 
     public Hero(ImageIcon i) {
         super(35, i);
@@ -56,10 +60,15 @@ public class Hero extends Unit {
     }
 
     public void checkLevelUP() {
-        if (this.xp >= this.maxXP[this.level - 1]) {
-            this.xp = 0;
-            this.level++;
-            this.maxHP += 5;
+        if (this.level != 6 && this.xp >= this.maxXP[this.level]) {
+            levelUp();
         }
+    }
+    public void levelUp() {
+    	this.xp -= this.maxXP[level];
+        this.level++;
+        this.maxHP += 5;
+        this.hp += 5;
+        Main.setUnlockable(true);
     }
 }
