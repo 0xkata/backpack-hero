@@ -465,6 +465,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 						realItems.get(selectedItem).get(1+i).changePoint(moveX, moveY);
 						realItems.get(selectedItem).get(1+i).setInBag(false);
 					}
+					itemDescription.setBounds(e.getX(), e.getY(), 100, 200);
 				}
 				mouseLoc = e.getPoint();
 			}
