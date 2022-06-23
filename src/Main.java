@@ -97,12 +97,19 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	public static Enemy[] getEnemies() {
 		return enemies;
 	}
+	private static ImageIcon[] moveIcons = new ImageIcon[7];
+	private static ImageIcon[] enemyMoveDisplay = new ImageIcon[4];
+	private static JLabel[] moveInfo = new JLabel[4];
 	private static ArrayList<Enemy> enemyList = new ArrayList<>();
+	
+	
 	private static ArrayList<ArrayList<Room>> map = new ArrayList<>();
+	
 	private static Hero hero = new Hero(new ImageIcon("Hero.png"));
 	public static Hero getHero() {
 		return hero;
 	}
+	
 	private static int numEnemies = 3;
 	private static int stage = 0;
 
@@ -125,10 +132,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	// shop room
 	private static boolean shop;
 	private static ImageIcon blacksmith;
-	private static Map<ImageIcon, Integer> shopButtons = new HashMap<>();
-	private static ImageIcon[] shopChosenButtons;
-	private static int[] priceList = {3, 5, 8, 15, 20};
-	private static ImageIcon commonButton, uncommonButton, rareButton, legendaryButton, relicButton;
+	private static ArrayList<ShopButton> shopButtons = new ArrayList<>();
+	private static ShopButton[] shopChosenButtons;
 
 	// heal room
 	private static boolean heal;
@@ -216,7 +221,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
       	}
 		readEnemyInfo();
 		readRoomInfo();
-
+		for(int i = 1; i < 7; ++i) {
+			moveIcons[i] = new ImageIcon(new ImageIcon("moveIcon" + i + ".png").getImage().getScaledInstance(100, 100, java.awt.Image.SCALE_REPLICATE));
+		}
 		background = new ImageIcon("background.png");
 	}
 
@@ -237,12 +244,17 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 int index = rand(0, 3);
                 enemies[i] = new Enemy(enemyList.get(index));
             }
+			if (stage == 3) {
+				int index = rand(2, 4);
+				enemies[i] = new Enemy(enemyList.get(index));
+			}
+
         }
     }
 	
 	public static void readEnemyInfo() {
 		enemyList.add(new Enemy(30, new ImageIcon("Snake.png"), new Move[]{new Move(1, 9), new Move(2, 14)}));
-		enemyList.add(new Enemy(20, new ImageIcon("Hyena.png"), new Move[]{new Move(1, 6), new Move(2, 4), new Move(5, 0)}));
+		enemyList.add(new Enemy(20, new ImageIcon("Hyena.png"), new Move[]{new Move(1, 6), new Move(2, 4), new Move(5, 6)}));
 		enemyList.add(new Enemy(35, new ImageIcon("Scorpio.png"), new Move[]{new Move(1, 5), new Move(2, 7), new Move(3, 3)}));
 		enemyList.add(new Enemy(40, new ImageIcon("Vulture.png"), new Move[]{new Move(1, 4), new Move(2, 5), new Move(4, 2)}));
 		enemyList.add(new Enemy(30, new ImageIcon("Mummy.png"), new Move[]{new Move(1, 7), new Move(2, 3)}));
@@ -404,6 +416,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		for(int i = 0; i < 4; ++i) {
 			enemyHPLabels[i] = new JTextArea();
 			this.add(enemyHPLabels[i]);
+		}
+		
+		for(int i = 0; i < 4; ++i) {
+			moveInfo[i] = new JLabel();
+			this.add(moveInfo[i]);
 		}
 		
 		this.addMouseMotionListener(new MouseMotionAdapter() {
@@ -659,28 +676,21 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		chest1 = new ImageIcon("chest1.png");
 		blacksmith = new ImageIcon("blacksmith.png");
 		alchemist = new ImageIcon("alchemist.png");
-		commonButton = new ImageIcon("commonButton.png");
-		uncommonButton = new ImageIcon("uncommonButton.png");
-		rareButton = new ImageIcon("rareButton.png");
-		legendaryButton = new ImageIcon("legendaryButton.png");
-		relicButton = new ImageIcon("relicButton.png");
-
-		shopButtons.put(commonButton, 3);
-		shopButtons.put(uncommonButton, 5);
-		shopButtons.put(rareButton, 8);
-		shopButtons.put(legendaryButton, 15);
-		shopButtons.put(relicButton, 20);
+		shopButtons.add(new ShopButton(new ImageIcon("commonButton.png"), 0, 3));
+		shopButtons.add(new ShopButton(new ImageIcon("uncommonButton.png"), 1, 5));
+		shopButtons.add(new ShopButton(new ImageIcon("rareButton.png"), 2, 8));
+		shopButtons.add(new ShopButton(new ImageIcon("legendaryButton.png"), 3, 15));
+		shopButtons.add(new ShopButton(new ImageIcon("relicButton.png"), 4, 20));
 	}
 
 	public static void generateShop() {
-
-		ImageIcon[] rand = {commonButton, uncommonButton, rareButton, legendaryButton, relicButton};
-		shopChosenButtons = new ImageIcon[3];
+		shopChosenButtons = new ShopButton[3];
 
 		for (int i = 0; i < 3; ++i) {
-			System.out.println(randomNum(0, 4));
-			shopChosenButtons[i] = rand[randomNum(0, 4)];
+			shopChosenButtons[i] = shopButtons.get(randomNum(0, 4));
 		}
+
+		Arrays.sort(shopChosenButtons);
 	}
 
 	public static void generateHeal() {
@@ -688,15 +698,15 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			healCost = 0;
 			healPic = new ImageIcon("heal0.png");
 		}
-		else if (stage == 0) {
+		else if (stage == 1) {
 			healCost = 2;
 			healPic = new ImageIcon("heal1.png");			
 		}
-		else if (stage == 0) {
+		else if (stage == 2) {
 			healCost = 5;
 			healPic = new ImageIcon("heal2.png");
 		}
-		else if (stage == 0) {
+		else if (stage == 3) {
 			healCost = 10;
 			healPic = new ImageIcon("heal3.png");
 		}
@@ -735,7 +745,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			if(fighting) {
 			 	if(turn == 0) {
 			 		//pick enemy moves
-			 	 	for (Enemy e : enemies) e.pickNextMove();
+			 	 	for (Enemy e : enemies) {
+						if (e == null) continue;
+						e.pickNextMove();
+					}
 			 		System.out.println("enemy moves picked");
 			 		energy = 3;
 			 		for(ArrayList<Item> i : realItems.values()) { //resetting the used boolean
@@ -762,7 +775,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			 		
 			 		tickEnemies(); //need to check if fight should be over here before moves
 
-			 		for (Enemy e : enemies) runEnemyMove(e); //use enemy moves
+			 		for (Enemy e : enemies) {
+						if (e == null) continue;
+						runEnemyMove(e); //use enemy moves
+					}
 			 		System.out.println("enemies used moves");
 			 		turn++;
 			 	}
@@ -776,33 +792,35 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		}
 	}
 	public static void runEnemyMove(Enemy e) {
-        int type = e.getPossibleMoves()[e.getNextMove()].getType();
-        System.out.println("move type: " + type);
-        int value = e.getPossibleMoves()[e.getNextMove()].getValue();
-        System.out.println("move value: " + value);
-        if (type == 1)
-            hero.changeHP(-value);
-        if (type == 2)
-            e.changeArmor(value);
-        if (type == 3)
-            hero.getStatus()[1] = value;
-        if (type == 4)
-            hero.getStatus()[3] = value;
-        if (type == 5) {
-            e.changeHP(value);
-        }
-        if (type == 6) {
-            boolean flag = true;
-            for (int i = 2; i >= 0 && flag; --i) {
-                if (enemies[i] == null) {
-                    enemies[i] = enemyList.get(4);
-                    flag = false;
-                }
-            }
-        }
-        defeated = !hero.alive();
-        if(defeated) System.exit(0);
-    }
+
+		int type = e.getPossibleMoves()[e.getNextMove()].getType();
+		System.out.println("move type: " + type);
+		int value = e.getPossibleMoves()[e.getNextMove()].getValue();
+		System.out.println("move value: " + value);
+		if (type == 1)
+			hero.changeHP(-value);
+		if (type == 2)
+			e.changeArmor(value);
+		if (type == 3)
+			hero.getStatus()[1] = value;
+		if (type == 4)
+			hero.getStatus()[3] = value;
+		if (type == 5) {
+			e.changeHP(value);
+		}
+		if (type == 6) {
+			boolean flag = true;
+			for (int i = 2; i >= 0 && flag; --i) {
+				if (enemies[i] == null) {
+					enemies[i] = enemyList.get(4);
+					flag = false;
+				}
+			}
+		}
+		defeated = !hero.alive();
+		if(defeated) System.exit(0);
+	}
+	
 	public void tickEnemies() {
 		for(Enemy e : enemies) {
 			if (e == null) continue;
@@ -889,9 +907,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		if (shop) {
 			blacksmith.paintIcon(main, g, 1600, 700);
 
-			shopChosenButtons[0].paintIcon(main, g, 200, 700);
-			shopChosenButtons[1].paintIcon(main, g, 200, 800);
-			shopChosenButtons[2].paintIcon(main, g, 200, 900);
+			shopChosenButtons[0].getPic().paintIcon(main, g, 200, 700);
+			shopChosenButtons[1].getPic().paintIcon(main, g, 200, 800);
+			shopChosenButtons[2].getPic().paintIcon(main, g, 200, 900);
 		}
 
 		if (heal) { 
@@ -916,6 +934,12 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     					enemyHPLabels[i].setText(enemies[i].getHp()+"/"+enemies[i].getMaxHP() +"\nArmor:" + enemies[i].getArmor() + "\nPoison: " + enemies[i].getStatus()[0] 
     							+ "\nRegen: " + enemies[i].getStatus()[1] + "\nSpikes: " + enemies[i].getStatus()[2] 
     									+ "\nRage: " + enemies[i].getStatus()[3] + "\nWeak: " + enemies[i].getStatus()[4]);
+    					moveInfo[i].setBounds(enemyPos[i], 600, 100, 40);
+    					int type = enemies[i].getPossibleMoves()[enemies[i].getNextMove()].getType();
+    					int value = enemies[i].getPossibleMoves()[enemies[i].getNextMove()].getValue();
+    					moveInfo[i].setText(""+value);
+    					enemyMoveDisplay[i] = moveIcons[type];
+    					enemyMoveDisplay[i].paintIcon(this, g, enemyPos[i], 600);
     				}
     			}
     		}
@@ -1028,17 +1052,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		if (shop) {
 			for (int i = 0; i < 3; ++i) {
 				if (inRect(mouseLoc, new Point(200, 700 + i * 100), 250, 100)) {
-					int price = shopButtons.get(shopChosenButtons[i]);
-					System.out.println(price);
-					int rarity = -1;
-
-					for (int j = 0; j < 5; ++j) if (price == priceList[j]) rarity = j;
-
-					if (money >= price) {
-						money -= price;
-						System.out.println("bought " + rarity);
-						int rand = randomNum(0, rarityList.get(rarity).size() - 1);
-						createItem(rarityList.get(rarity).get(rand).getIdentifier().getPrim());
+					if (money >= shopChosenButtons[i].getPrice()) {
+						money -= shopChosenButtons[i].getPrice();
+						System.out.println("bought " + shopChosenButtons[i].getRarity());
+						int rand = randomNum(0, rarityList.get(shopChosenButtons[i].getRarity()).size() - 1);
+						createItem(rarityList.get(shopChosenButtons[i].getRarity()).get(rand).getIdentifier().getPrim());
 					}
 				}
 			}
@@ -1150,11 +1168,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	//returns void
 	public void mouseClicked(MouseEvent e) {
 		//if the mouse click is within the reorganize button's bounds
-		if(!reorganize && overBag() && turn == 2 && realBag.getUnlocked()[yTile][xTile]  && !realBag.getContents()[yTile][xTile].getName().equals("Empty")) { //if unable to reorganize, player must be in combat mode
+		if(!reorganize && overBag() && turn == 2 && realBag.getUnlocked()[yTile][xTile] && !realBag.getContents()[yTile][xTile].getName().equals("Empty")) { //if unable to reorganize, player must be in combat mode
 			getSelectedItem(e);
 
 			//calls the abilities of the item when used
-			realItems.get(selectedItem).get(0).use();
+			if(realItems.get(selectedItem).get(0) != null) realItems.get(selectedItem).get(0).use();
 
 			mouseInSquare = false;
 			selectedItem = -1;
