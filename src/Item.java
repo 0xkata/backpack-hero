@@ -93,6 +93,8 @@ public class Item {
 	}
 	public void use() {
 		//TODO: do various things depending on the itemID of the item
+		int rage = Main.getHero().getStatus()[3];
+		int weak = Main.getHero().getStatus()[4];
 		int bottleArmor = 1;
 		int bottleDmg = 0;
 		int citrineDmg = 0;
@@ -106,7 +108,7 @@ public class Item {
 		else if(type.equals("Shield")) {
 			if(Main.bagHasItem(17)) Main.getHero().getStatus()[5] += 2; //checking for presence of coral, adding 2 spike
 		}
-		if(hasAdjacent(11)) citrineDmg = -3; //checking for adjacent Citrine
+		citrineDmg = -3*numAdjacent(11); //checking for adjacent Citrine
 		if(Main.bagHasItem(16)) { //checking for glass bottle presence
 			System.out.println("bottle");
 			bottleDmg = -6; 
@@ -131,14 +133,17 @@ public class Item {
 			Main.getHero().changeHP(12);
 		}
 		else if(typeID == 3) { //Club
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-7+bottleDmg+citrineDmg);
+			int damage = Math.min(0, -7+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 			Main.getEnemies()[Main.getSelectedEnemy()].getStatus()[4]++;
 		}
 		else if(typeID == 4) { //Cleaver
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-3+bottleDmg+citrineDmg);
+			int damage = Math.min(0, -3+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 		}
 		else if(typeID == 5) { //Wood Sword
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-8+bottleDmg+citrineDmg);
+			int damage = Math.min(0, -8+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 		}
 		else if(typeID == 6) { //Tough Buckler
 			Main.getHero().changeArmor(7*bottleArmor);
@@ -147,16 +152,18 @@ public class Item {
 			Main.increaseEnergy(2);
 		}
 		else if(typeID == 9) { //My First Wand
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-6+bottleDmg+citrineDmg);
+			int damage = Math.min(0, -6+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 			Main.getHero().changeHP(2);
 		}
 		else if(typeID == 10) { //Golden Dagger
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-2+bottleDmg+citrineDmg);
+			int damage = Math.min(0,-2+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 			//TODO add gold
 		}
 		else if(typeID == 12) { //Dagger
-			//figure out once per turn stuff later
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(-2+bottleDmg+citrineDmg);
+			int damage = Math.min(0,-2+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 			Main.getEnemies()[Main.getSelectedEnemy()].getStatus()[0] += 8;
 		}
 		else if(typeID == 13) { //Li'l Buckler
@@ -165,13 +172,15 @@ public class Item {
 		else if(typeID == 14) { //Hatchet
 			int damage = -5;
 			if(Main.bagHasArmor()) damage += 4;
-			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage+bottleDmg+citrineDmg);
+			damage = Math.min(0,-2+damage+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 		}
 		else if(typeID == 15) { //Rare Herb
 			Main.getHero().setMaxHP(Main.getHero().getMaxHP()+3);
 		}
 		else if(typeID == 18) { //Rapier
-			Main.getEnemies()[Main.getSelectedEnemy()].pierceHP(-25+bottleDmg+citrineDmg);
+			int damage = Math.min(0,-25+bottleDmg+citrineDmg-rage+weak);
+			Main.getEnemies()[Main.getSelectedEnemy()].pierceHP(damage);
 		}
 		
 		if(oncePerTurn) used = true;
@@ -183,7 +192,6 @@ public class Item {
 		int bottleArmor = 1;
 		int bottleDmg = 0;
 		if(Main.bagHasItem(16)) { //checking for glass bottle presence
-			System.out.println("bottle");
 			bottleDmg = -6; 
 			bottleArmor = 0;
 		}
@@ -199,14 +207,14 @@ public class Item {
 			Main.getHero().getStatus()[2]++;
 		}
 	}
-	public boolean hasAdjacent(int id) {
-		boolean out = false;
+	public int numAdjacent(int id) {
+		int out = 0;
 		int x = xBagPos;
 		int y = yBagPos;
 		for(int i = 0; i < 4; ++i) {
 			Pair2 cur = ortho[i];
 			if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
-				if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out = true;
+				if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out++;
 			}
 		}
 		for(int j = 0; j < rotations[rotate].getRelative().length; ++j) {
@@ -215,7 +223,7 @@ public class Item {
 			for(int i = 0; i < 4; ++i) {
 				Pair2 cur = ortho[i];
 				if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
-					if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out = true;
+					if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out++;
 				}
 			}
 			x = xBagPos;
