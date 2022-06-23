@@ -161,7 +161,7 @@ public class Item {
 		else if(typeID == 10) { //Golden Dagger
 			int damage = Math.min(0,-2+bottleDmg+citrineDmg-rage+weak);
 			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
-			//TODO add gold
+			Main.increaseMoney(2);
 		}
 		else if(typeID == 12) { //Dagger
 			int damage = Math.min(0,-2+bottleDmg+citrineDmg-rage+weak);

@@ -1,0 +1,57 @@
+About:
+Made by Roni Shae and Anthony Sin for ICS4U
+
+Objective:
+
+Reach the lowest floor of the dungeon and defeat the evil Deceased King!
+
+He will send his scary minions to try and defeat you!!
+
+Luckily, you have the help of your magical backpack.
+The only items you can bring to the fight are the ones you can fit in your backpack.
+You may have to turn, move, and abandon items to fit the items that are most important.
+
+Controls:
+
+Use the left click on the mouse to drag items in and out of your backpack.
+Use the left click on the mouse to press the buttons on the screen.
+Use the left click on the mouse to click on enemies to set them to the selected target.
+Use the left click on the mouse above an item in your backpack (during a fight) to use it.
+Use the right click on the mouse on an item to show information on what the item does.
+Press the 'W' key while holding an item to rotate it.
+
+Rules / Systems:
+
+Each floor has a unique map. You will need to use the Alt+Tab keys to bring the map to the top of your windows.
+On the map are various icons, each representing a different thing.
+The backpack represents you.
+The key represents the exit.
+You must clear all rooms in your path to another room.
+When you enter a room, you must press the end turn button to leave it, or you cannot progress.
+^ Unless it is a fight, you can only leave a fight room after defeating all the enemies.
+After winning a fight, you gain xp and gold.
+Gold is used at the shop and healer.
+XP is used to level up. The amount needed to level up increases with each level.
+After levelling up, you may expand your backpack by clicking on any locked spaces (blue squares).
+
+What to expect during a fight:
+
+Turn based combat.
+At the start of each turn, you will refresh to 3 energy points.
+Most items have an energy cost.
+The item's active effect will occur immediately after you use it.
+Items have different classes.
+Items with only passive effects (armor, accessories) will not do anythnig when clicked on.
+Consumable items will disappear from your backpack once used.
+Certain items can only be used once per turn.
+Make sure you're prepared before the fight, it costs 3 energy if you want to reorganize during the fight!
+If you're out of options, you can choose to "Scratch." This deals 3 damage for 1 energy.
+Weapons can only damage one enemy at a time. Make sure you select the one you wish to attack before using the weapon.
+Enemies will display their next move above their heads with an icon indicating the move type and a number indicating the value.
+They will apply various status effects to themselves and you.
+Status effects are displayed next to the unit they affect.
+Each turn, they will apply their effect to their respective unit and then decrease by 1.
+Poison: -x HP 
+Regen: +x HP
+Rage: +x Damage
+Weak: -x Damage
