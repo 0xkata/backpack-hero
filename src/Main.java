@@ -88,6 +88,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	static Main main;
 	static JPanel title;
 	static JPanel mapPanel;
+	static ImageIcon background;
 
 	// enemies related
 	public static int enemyHP = 10;
@@ -124,10 +125,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	// shop room
 	private static boolean shop;
 	private static ImageIcon blacksmith;
-	private static Map<ImageIcon, Integer> shopButtons = new HashMap<>();
-	private static ImageIcon[] shopChosenButtons;
-	private static int[] priceList = {3, 5, 8, 15, 20};
-	private static ImageIcon commonButton, uncommonButton, rareButton, legendaryButton, relicButton;
+	private static ShopButton[] shopChosenButtons;
+	private static ArrayList<ShopButton> shopButtons = new ArrayList<>();
 
 	// heal room
 	private static boolean heal;
@@ -225,6 +224,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
       	}
 		readEnemyInfo();
 		readRoomInfo();
+
+		background = new ImageIcon("background.png");
 	}
 
 	public static void generateEnemies(int stage) {
@@ -685,28 +686,24 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		chest1 = new ImageIcon("chest1.png");
 		blacksmith = new ImageIcon("blacksmith.png");
 		alchemist = new ImageIcon("alchemist.png");
-		commonButton = new ImageIcon("commonButton.png");
-		uncommonButton = new ImageIcon("uncommonButton.png");
-		rareButton = new ImageIcon("rareButton.png");
-		legendaryButton = new ImageIcon("legendaryButton.png");
-		relicButton = new ImageIcon("relicButton.png");
 
-		shopButtons.put(commonButton, 3);
-		shopButtons.put(uncommonButton, 5);
-		shopButtons.put(rareButton, 8);
-		shopButtons.put(legendaryButton, 15);
-		shopButtons.put(relicButton, 20);
+		shopButtons.add(new ShopButton(new ImageIcon("commonButton.png"), 0 , 3));
+		shopButtons.add(new ShopButton(new ImageIcon("uncommonButton.png"), 1, 5));
+		shopButtons.add(new ShopButton(new ImageIcon("rareButton.png"), 2, 8));
+		shopButtons.add(new ShopButton(new ImageIcon("legendaryButton.png"), 3, 15));
+		shopButtons.add(new ShopButton(new ImageIcon("relicButton.png"), 4, 20));
+
 	}
 
 	public static void generateShop() {
-
-		ImageIcon[] rand = {commonButton, uncommonButton, rareButton, legendaryButton, relicButton};
-		shopChosenButtons = new ImageIcon[3];
+		shopChosenButtons = new ShopButton[3];
 
 		for (int i = 0; i < 3; ++i) {
 			System.out.println(randomNum(0, 4));
-			shopChosenButtons[i] = rand[randomNum(0, 4)];
+			shopChosenButtons[i] = shopButtons.get(randomNum(0, 4));
 		}
+
+		Arrays.sort(shopChosenButtons);
 	}
 
 	public static void generateHeal() {
@@ -830,6 +827,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		background.paintIcon(main, g, 0, 0);
+
 		//draws the backpack based on the contents
 		for(int i = 0; i < 7; ++i) { //7 tiles across
 			for(int j = 0; j < 5; ++j) { //5 tiles down
@@ -878,9 +877,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		if (shop) {
 			blacksmith.paintIcon(main, g, 1600, 700);
 
-			shopChosenButtons[0].paintIcon(main, g, 200, 700);
-			shopChosenButtons[1].paintIcon(main, g, 200, 800);
-			shopChosenButtons[2].paintIcon(main, g, 200, 900);
+			shopChosenButtons[0].getPic().paintIcon(main, g, 200, 700);
+			shopChosenButtons[1].getPic().paintIcon(main, g, 200, 800);
+			shopChosenButtons[2].getPic().paintIcon(main, g, 200, 900);
 		}
 
 		if (heal) { 
@@ -1017,17 +1016,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		if (shop) {
 			for (int i = 0; i < 3; ++i) {
 				if (inRect(mouseLoc, new Point(200, 700 + i * 100), 250, 100)) {
-					int price = shopButtons.get(shopChosenButtons[i]);
-					System.out.println(price);
-					int rarity = -1;
-
-					for (int j = 0; j < 5; ++j) if (price == priceList[j]) rarity = j;
-
-					if (money >= price) {
-						money -= price;
-						System.out.println("bought " + rarity);
-						int rand = randomNum(0, rarityList.get(rarity).size() - 1);
-						createItem(rarityList.get(rarity).get(rand).getIdentifier().getPrim());
+					if (money >= shopChosenButtons[i].getPrice()) {
+						money -= shopChosenButtons[i].getPrice();
+						System.out.println("bought " + shopChosenButtons[i].getRarity());
+						int rand = randomNum(0, rarityList.get(shopChosenButtons[i].getRarity()).size() - 1);
+						createItem(rarityList.get(shopChosenButtons[i].getRarity()).get(rand).getIdentifier().getPrim());
 					}
 				}
 			}

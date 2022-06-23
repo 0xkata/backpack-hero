@@ -24,17 +24,20 @@ public class Enemy extends Unit {
     public Enemy(int maxHP, ImageIcon i, Move[] moves) {
         super(maxHP, i);
         this.possibleMoves = moves;
-        this.nextMove = pickNextMove();
+        pickNextMove();
     }
 
-    public int pickNextMove() {
-        return Driver.randomNum(0, possibleMoves.length);
+    public void pickNextMove() {
+    	
+    	int rand = Main.rand(0, possibleMoves.length-1);
+    	System.out.println("picked move: " + rand);
+        this.nextMove = rand;
     }
-    
+
     public Enemy(Enemy e) {
         super(e.maxHP, e.pic);
         this.possibleMoves = e.possibleMoves;
-        this.nextMove = pickNextMove();
+        pickNextMove();
     }
 
 }

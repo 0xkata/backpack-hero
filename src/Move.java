@@ -6,9 +6,9 @@ public class Move {
         1 damage stage 1
         2 add armor
         3 add poison
-        4 add slow
-        5 regen
-        6 (Boss) sommon enemies
+        4 add hp
+        5 add regen
+        6 (Boss) summon enemies
      */
 
     private int type;
