@@ -236,7 +236,6 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		out.add(backgroundLabel);
 		backgroundLabel.setBounds(0, 0, 1920, 1080);
 		try {
-//			JTextArea rules = new JTextArea("hello");
 			JTextArea rules = new JTextArea(convertFile("Rules.txt"));
 			rules.setMargin(new Insets(10, 10, 10, 10));
 			rules.setBounds(60, 40, 1800, 800);
@@ -249,13 +248,13 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			e.printStackTrace();
 		}
 
-		//quit button
-		JButton quit = new JButton("Quit");
-		quit.setFont(coolFont60);
-		backgroundLabel.add(quit);
-		quit.setBounds(810, 850, 300, 100);
-		quit.setActionCommand ("QUIT");
-		quit.addActionListener(this);
+		//back button
+        JButton back = new JButton("Back");
+        back.setFont(coolFont60);
+        backgroundLabel.add(back);
+        back.setBounds(810, 850, 300, 100);
+        back.setActionCommand ("BACK");
+        back.addActionListener(this);
 		
 		out.setVisible(true);
 		return out;
@@ -1646,11 +1645,18 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			
 		}
 
+		//back button pressed
+        else if(eventName.equals("BACK")) {
+            rulesScreen.setVisible(false);
+            title.setVisible(true);
+        }
+
 		//rules button pressed
-		else if(eventName.equals("RULES")) {
-			title.setVisible(false);
-			frame.add(rulesScreen);
-		}
+        else if(eventName.equals("RULES")) {
+            title.setVisible(false);
+            rulesScreen.setVisible(true);
+            frame.add(rulesScreen);
+        }
 		main.requestFocusInWindow();
 
 	}
