@@ -88,6 +88,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	static Main main;
 	static JPanel title;
 	static JPanel mapPanel;
+	static ImageIcon background;
 
 	// enemies related
 	public static int enemyHP = 10;
@@ -215,6 +216,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
       	}
 		readEnemyInfo();
 		readRoomInfo();
+
+		background = new ImageIcon("background.png");
 	}
 
 	public static void generateEnemies(int stage) {
@@ -823,6 +826,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	//returns void
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		background.paintIcon(main, g, 0, 0);
 
 		//draws the backpack based on the contents
 		for(int i = 0; i < 7; ++i) { //7 tiles across
