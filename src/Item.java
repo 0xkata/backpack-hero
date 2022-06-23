@@ -92,6 +92,7 @@ public class Item {
 		used = v;
 	}
 	public void use() {
+		System.out.println(itemName);
 		//TODO: do various things depending on the itemID of the item
 		int rage = Main.getHero().getStatus()[3];
 		int weak = Main.getHero().getStatus()[4];

@@ -479,26 +479,33 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 
                 if (type == 2) {
 					System.out.println("chest");
+					purge();
 					chest = true;
+					reorganize = true;
 					for (int i = 0; i < 3; ++i) createItem(randomRarity());
                 }
                 else if (type == 3) {
 					System.out.println("shop");
+					purge();
 					shop = true;
+					reorganize = true;
 					generateShop();
                 }
                 else if (type == 4) {
 					System.out.println("heal");
+					purge();
 					heal = true;
 					generateHeal();
                 }
                 else if (type == 6) {
 					System.out.println("boss");
+					purge();
 					generateBoss();
 					startFight();
                 }
                 else if (type == 8) {
 					System.out.println("Next Stage");
+					purge();
 					generateMap(++stage);
 					System.out.println(currentRoom);
                 }
@@ -703,7 +710,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	
 	public static boolean checkEnemies() {
  		boolean check = true;
-		for (Enemy e : enemies) if (e.alive()) check = false;
+		for (int i = 0; i < numEnemies; ++i) {
+			if (enemies[i] == null) continue;
+			if (enemies[i].alive()) check = false;
+			else enemies[i] = null;
+		}
 		return check;
 	}
 
@@ -794,6 +805,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     }
 	public void tickEnemies() {
 		for(Enemy e : enemies) {
+			if (e == null) continue;
 			e.tick();
 		}
 	}
@@ -1054,8 +1066,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 			int oxLoc = xTile;
 			int oyLoc = yTile;
 			if(selectedComponent > -1) {
-				oxLoc -= origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getFirst();
-				oyLoc -= origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getSecond();
+				if(origin.getSize() > 1) {
+					oxLoc -= origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getFirst();
+					oyLoc -= origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getSecond();
+				}
 			}
 
 			//computing if the entire item will be within bounds of the bag
@@ -1089,6 +1103,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 				realBag.addItem(oxTile, oyTile, origin);
 				origin.setX(oxTile);
 				origin.setY(oyTile);
+				origin.setPoint(new Point(oxTile*squareSize+xBagIndent, oyTile*squareSize+yBagIndent));
 				origin.setInBag(true);
 
 				//adding the rest of the components (if any)
@@ -1098,6 +1113,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 					oxTile += origin.getRotations()[origin.getRotate()].getRelative()[i].getFirst();
 					oyTile += origin.getRotations()[origin.getRotate()].getRelative()[i].getSecond();
 					realBag.addItem(oxTile, oyTile, realItems.get(selectedItem).get(1+i));
+					realItems.get(selectedItem).get(1+i).setPoint(new Point(oxTile*squareSize+xBagIndent, oyTile*squareSize+yBagIndent));
 					realItems.get(selectedItem).get(1+i).setInBag(true);
 					realItems.get(selectedItem).get(1+i).setX(oxTile);
 					realItems.get(selectedItem).get(1+i).setY(oyTile);
@@ -1112,6 +1128,13 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		mouseInSquare = false;
 		selectedItem = -1;
 		selectedComponent = -1;
+		System.out.println();
+		for(int i = 0; i < 5; ++i) {
+			for(int j = 0; j < 7; ++j) {
+				System.out.print(realBag.getContents()[i][j].getIdentifier()+" ");
+			}
+			System.out.println();
+		}
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -1251,7 +1274,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	public static void startFight() { //TODO
 		purge();
 		fighting = true;
-//		playerTurn = true;
+		selectedEnemy = 0;
 		turn = 0;
 		reorganize = false;
 	}
@@ -1261,6 +1284,9 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		turn = 0;
 		reorganize = true;
 		selectedEnemy = 0;
+		stopFight = false;
+		map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
+
 		//hiding enemy status labels
 		for(int i = 0; i < enemyHPLabels.length; ++i) {
 			enemyHPLabels[i].setBounds(enemyPos[i], 900, 0, 0);
