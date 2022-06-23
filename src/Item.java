@@ -216,7 +216,7 @@ public class Item {
 		for(int i = 0; i < 4; ++i) {
 			Pair2 cur = ortho[i];
 			if(Main.inBagBounds(x+cur.getFirst(), y+cur.getSecond())) {
-				if(Main.getBag().getContents()[x+cur.getFirst()][y+cur.getSecond()].getIdentifier().getPrim() == id) out++;
+				if(Main.getBag().getContents()[y+cur.getSecond()][x+cur.getFirst()].getIdentifier().getPrim() == id) out++;
 			}
 		}
 		for(int j = 0; j < rotations[rotate].getRelative().length; ++j) {
