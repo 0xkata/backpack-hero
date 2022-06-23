@@ -511,6 +511,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 else if (type == 8) {
 					System.out.println("Next Stage");
 					generateMap(++stage);
+					System.out.println(currentRoom);
                 }
                 else if (type == 9) {
 
@@ -864,6 +865,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     				}
     			}
     		}
+
+			g.drawRect(enemyPos[selectedEnemy], 700, 300, 300);
 		}
 //		if(turn == 1) {
 //			g.drawRect(1, 1, 100, 300);
@@ -955,6 +958,14 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	public void mousePressed(MouseEvent e) {
 		mouseLoc = e.getPoint();
 		getSelectedItem(e);
+
+		if (fighting) {
+			for (int i = 0; i < 4; ++i) {
+				if (inRect(mouseLoc, new Point(enemyPos[i], 700), 300, 300)) {
+					selectedEnemy = i; 
+				}
+			}
+		}
 
 		if (shop) {
 			for (int i = 0; i < 3; ++i) {
