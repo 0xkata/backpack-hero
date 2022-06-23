@@ -59,7 +59,10 @@ public abstract class Unit {
     }
 
     public void changeHP(int n) { //make negative values subtract from armor first, need to consider the rage and weak of the person who caused the hp change
-        if(n > 0) 	this.hp += n;
+        if(n > 0) {
+            this.hp += n;
+            if (this.hp > this.maxHP) this.hp = this.maxHP;
+        }
         else {
         	int pierced = armor + n;
         	armor += n;

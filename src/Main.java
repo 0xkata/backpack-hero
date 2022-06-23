@@ -6,6 +6,8 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Toolkit;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -38,6 +40,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	private static Point selectedPoint; //the point where the selected item is before being dragged
 	private int oxTile, oyTile; //tile the origin of the item is in
 	private int selectedComponent = -1; //the component of the realItem that the mouse has selected, a (origin) --> -1, b --> 0, c --> 1, etc
+	private JTextArea itemDescription = new JTextArea("");
 
 	//mouse status variables
 	private int mouseX, mouseY; //x and y position of the mouse
@@ -82,6 +85,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	public static int getSelectedEnemy() {
 		return selectedEnemy;
 	}
+	private static JButton finishedReorganizing;
 
 	//the various panels for the screens
 	static JFrame frame, frame2;
@@ -89,6 +93,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	static JPanel title;
 	static JPanel mapPanel;
 	static ImageIcon background;
+	static Font coolFont;
 
 	// enemies related
 	public static int enemyHP = 10;
@@ -180,26 +185,33 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		addKeyListener(this);
 		out.setLayout(null);
 
+		JLabel backgroundLabel = new JLabel(background);
+		out.add(backgroundLabel);
+		backgroundLabel.setBounds(0, 0, 1920, 1080);
+
 		ImageIcon pic = new ImageIcon(new ImageIcon("Game Name.png").getImage().getScaledInstance(868, 406, java.awt.Image.SCALE_SMOOTH));
 		JLabel gameName = new JLabel(pic);
-		out.add(gameName);
+		backgroundLabel.add(gameName);
 		gameName.setBounds(526, 100, 868, 406);
 
 		JButton startGame = new JButton("Start Game!");
-		out.add(startGame);
+		startGame.setFont(coolFont);
+		backgroundLabel.add(startGame);
 		startGame.setBounds(810, 550, 300, 100);
 		startGame.setActionCommand ("START GAME");
 		startGame.addActionListener(this);
 
 		JButton rulesButton = new JButton("Rules");
-		out.add(rulesButton);
-		rulesButton.setBounds(910, 750, 100, 50);
+		rulesButton.setFont(coolFont);
+		backgroundLabel.add(rulesButton);
+		rulesButton.setBounds(810, 650, 300, 100);
 		rulesButton.setActionCommand ("RULES");
 		rulesButton.addActionListener(this);
 
 		JButton quit = new JButton("Quit");
-		out.add(quit);
-		quit.setBounds(910, 850, 100, 50);
+		quit.setFont(coolFont);
+		backgroundLabel.add(quit);
+		quit.setBounds(810, 750, 300, 100);
 		quit.setActionCommand ("QUIT");
 		quit.addActionListener(this);
 
@@ -210,21 +222,31 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	//no parameters
 	//returns void
 	public static void initialize() {
+		try {
+			coolFont = Font.createFont(Font.TRUETYPE_FONT, new File("coolfont.ttf")).deriveFont(60f);
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(coolFont);
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+
 		for(int i = 0; i < 5; ++i) {
 			rarityList.add(new ArrayList<Item>());
 		}
 		readItemInfo();
 		realBag = new Backpack();
 		for(int i = 1; i < firstList.size(); ++i) {
-         	// createItem(randomRarity());
-          	createItem(i);
-      	}
+			// createItem(randomRarity());
+			createItem(i);
+		}
 		readEnemyInfo();
 		readRoomInfo();
 		for(int i = 1; i < 7; ++i) {
 			moveIcons[i] = new ImageIcon(new ImageIcon("moveIcon" + i + ".png").getImage().getScaledInstance(100, 100, java.awt.Image.SCALE_REPLICATE));
 		}
 		background = new ImageIcon("background.png");
+
 	}
 
 	public static void generateEnemies(int stage) {
@@ -401,12 +423,20 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 		toggleReorganize.setActionCommand ("REORGANIZE");
 		toggleReorganize.addActionListener(this);
 
+		finishedReorganizing = new JButton("Finished Reorganizing");
+		this.add(finishedReorganizing);
+		finishedReorganizing.setBounds(40, 100, 0, 0);
+		finishedReorganizing.setActionCommand ("REORGANIZING DONE");
+		finishedReorganizing.addActionListener(this);
+		
 		JButton end = new JButton("End Turn!");
 		this.add(end);
 		end.setBounds(1500, 300, 100, 50);
 		end.setActionCommand("END TURN");
 		end.addActionListener(this);
 
+		this.add(itemDescription);
+		
 		energyLabel = new JLabel("3");
 		this.add(energyLabel);
 		energyLabel.setBounds(1000, 500, 100, 50);
@@ -1077,6 +1107,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 	//e: mouse event that happened
 	//returns void
 	public void mouseReleased(MouseEvent e) {
+		itemDescription.setBounds(0, 0, 0, 0);
 		if(overBag() && selectedItem >= 0 && reorganize) { //mouse must be released over the bag and have selected an item and organizing is allowed
 			Item origin = realItems.get(selectedItem).get(0);
 
@@ -1115,8 +1146,10 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 				oxTile = xTile;
 				oyTile = yTile;
 				if(selectedComponent >= 0) {
-					oxTile -=  origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getFirst();
-					oyTile -= origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getSecond();
+					if(origin.getSize() > 1) {
+						oxTile -=  origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getFirst();
+						oyTile -= origin.getRotations()[origin.getRotate()].getRelative()[selectedComponent].getSecond();
+					}
 				}
 				realBag.addItem(oxTile, oyTile, origin);
 				origin.setX(oxTile);
@@ -1139,7 +1172,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 					oyTile = oyCopy;
 				}
 			}
-			else System.out.println("not allowed"); //TODO: maybe do something different when not allowed
+			else System.out.println("not allowed");
 
 		}
 		//resetting the logic variables
@@ -1231,10 +1264,19 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
 			}
 
-			if (fighting) turn++;
+			if (fighting) {
+				reorganize = false;
+				turn++;
+			}
+			finishedReorganizing.setBounds(40, 100, 0, 0); //hide finish reorganizing button
 		}
 		else if(eventName.equals("QUIT")) {
 			System.exit(0);
+		}
+		else if(eventName.equals("REORGANIZING DONE")) {
+			finishedReorganizing.setBounds(40, 100, 0, 0);
+			System.out.println("done reorganizing");
+			reorganize = false;
 		}
 		main.requestFocusInWindow();
 

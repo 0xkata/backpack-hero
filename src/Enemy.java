@@ -28,7 +28,6 @@ public class Enemy extends Unit {
     }
 
     public void pickNextMove() {
-    	
     	int rand = Main.rand(0, possibleMoves.length-1);
     	System.out.println("picked move: " + rand);
         this.nextMove = rand;

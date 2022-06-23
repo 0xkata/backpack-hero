@@ -92,7 +92,6 @@ public class Item {
 		used = v;
 	}
 	public void use() {
-		System.out.println(itemName);
 		//TODO: do various things depending on the itemID of the item
 		int rage = Main.getHero().getStatus()[3];
 		int weak = Main.getHero().getStatus()[4];
@@ -126,6 +125,8 @@ public class Item {
 		}
 		Main.decreaseEnergy(energy);
 		int typeID = this.itemID.getPrim();
+		System.out.println(typeID);
+		System.out.println("selected enemy: "+Main.getSelectedEnemy());
 //		System.out.println(typeID); 
 		if(typeID == 0) {
 			System.out.println("Empty was used.");
@@ -173,7 +174,7 @@ public class Item {
 		else if(typeID == 14) { //Hatchet
 			int damage = -5;
 			if(Main.bagHasArmor()) damage += 4;
-			damage = Math.min(0,-2+damage+bottleDmg+citrineDmg-rage+weak);
+			damage = Math.min(0, damage+bottleDmg+citrineDmg-rage+weak);
 			Main.getEnemies()[Main.getSelectedEnemy()].changeHP(damage);
 		}
 		else if(typeID == 15) { //Rare Herb
@@ -258,8 +259,14 @@ public class Item {
 	public String getType() {
 		return type;
 	}
+	public String getDescription() {
+		return description;
+	}
 	public String getName() {
 		return itemName;
+	}
+	public Point getLoc() {
+		return this.loc;	
 	}
 	public void setInBag(boolean v) {
 		inBag = v;
