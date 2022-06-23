@@ -8,7 +8,6 @@ public class Room {
         2 = chest
         3 = shop
         4 = healer
-        5 = troll
         6 = boss room
         7 = start room 1 north 2 east 3 south 4 west
         8 = next stage

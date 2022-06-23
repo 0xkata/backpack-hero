@@ -1099,6 +1099,11 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
 				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
 				purge();
 			}
+			if (shop) {
+				shop = false;
+				map.get(currentRoom.getRow()).get(currentRoom.getCol()).clear();
+				purge();
+			}
 			if (fighting) turn++;
 		}
 		else if(eventName.equals("QUIT")) {
