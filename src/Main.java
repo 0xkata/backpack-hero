@@ -116,6 +116,7 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
     private static boolean[][] visited = new boolean[5][11];
     private static LinkedList<Pair> path = new LinkedList<>();
     private static boolean moving;
+	private static boolean sleep;
 
 	// chest room 
 	private static boolean chest;
@@ -506,7 +507,8 @@ public class Main extends JPanel implements Runnable, MouseListener, ActionListe
                 }
                 else if (type == 8) {
 					System.out.println("Next Stage");
-					generateMap(stage++);
+					generateMap(++stage);
+					
                 }
                 else if (type == 9) {
 
