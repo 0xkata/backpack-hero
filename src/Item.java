@@ -194,9 +194,9 @@ public class Item {
 	public void auto() {
 		int typeID = this.itemID.getPrim();
 		int bottleArmor = 1;
-		int bottleDmg = 0;
+		// int bottleDmg = 0;
 		if(Main.bagHasItem(16)) { //checking for glass bottle presence
-			bottleDmg = -6; 
+			// bottleDmg = -6; 
 			bottleArmor = 0;
 		}
 		
